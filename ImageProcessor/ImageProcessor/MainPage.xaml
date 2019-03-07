@@ -49,17 +49,144 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ImageFileTextBox"/>
-            <ScrollViewer x:Name="inputImageScroll" Grid.Row="1" Grid.Column="0" 
+            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="8,8,8,8" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Image path:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBox x:Name="ImageFileTextBox" Grid.Column="1"/>
+                <TextBlock Text="Image resolution:" Grid.Column="2" VerticalAlignment="Center" Margin="16,0,8,0" />
+                <TextBlock x:Name="ImageResolution" Grid.Column="3" VerticalAlignment="Center" />
+            </Grid>
+            
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Original image:" VerticalAlignment="Center" Margin="8,0,8,0"/>
+
+            <ScrollViewer x:Name="inputImageScroll" Grid.Row="2" Grid.Column="0" 
                           ZoomMode="Enabled" MinZoomFactor="0.25" 
                           HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <Image x:Name="inputImage" MaxWidth="{Binding ActualWidth, ElementName=inputImageScroll}"
                        MaxHeight="{Binding ActualHeight, ElementName=inputImageScroll}"/>
             </ScrollViewer>
-            <Image Grid.Row="1" Grid.Column="1" x:Name="outputImage" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
+            
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="Processed image:" VerticalAlignment="Center" Margin="8,0,8,0"/>
+
+            <ScrollViewer x:Name="outputImageScroll" Grid.Row="2" Grid.Column="1" 
+                          ZoomMode="Enabled" MinZoomFactor="0.25" 
+                          HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <Image x:Name="outputImage" MaxWidth="{Binding ActualWidth, ElementName=outputImageScroll}"
+                       MaxHeight="{Binding ActualHeight, ElementName=inputImageScroll}"/>
+            </ScrollViewer>
+
+            <Grid Grid.Row="3" Grid.Column="0"  Grid.ColumnSpan="2" Margin="8,8,8,8" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <CommandBar Grid.Column="1" DefaultLabelPosition="Right">
+                    <!-- Zoom controls -->
+                    <AppBarElementContainer>
+                        <AppBarElementContainer.Resources>
+                            <!-- Override default brushes to make the Buttons 
+                     match other command bar elements. -->
+                            <SolidColorBrush x:Key="ButtonBackground"
+                                 Color="Transparent"/>
+                            <SolidColorBrush x:Key="ButtonBackgroundPressed"
+                                 Color="{ThemeResource SystemListMediumColor}"/>
+                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver"
+                                 Color="{ThemeResource SystemListLowColor}"/>
+                            <SolidColorBrush x:Key="ButtonBorderBrush"
+                                 Color="Transparent"/>
+                            <SolidColorBrush x:Key="ButtonBorderBrushPointerOver"
+                                 Color="Transparent"/>
+                            <SolidColorBrush x:Key="ButtonBorderBrushChecked"
+                                 Color="Transparent"/>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Height" Value="46"/>
+                                <Setter Property="Width" Value="40"/>
+                            </Style>
+                        </AppBarElementContainer.Resources>
+                        <Grid Margin="12,-4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                           
+                            <StackPanel Orientation="Horizontal">
+                                <Button ToolTipService.ToolTip="Zoom out" Click="ZoomOutButton_Click">
+                                    <Viewbox Width="16" Height="16">
+                                        <SymbolIcon Symbol="ZoomOut"/>
+                                    </Viewbox>
+                                </Button>
+                                <SplitButton ToolTipService.ToolTip="Alignment">
+                                    <SplitButton.Resources>
+                                        <!-- Override default brushes to make the SplitButton 
+                     match other command bar elements. -->
+                                        <Style TargetType="SplitButton">
+                                            <Setter Property="Height" Value="38"/>
+                                        </Style>
+                                        <SolidColorBrush x:Key="SplitButtonBackground"
+                                 Color="Transparent"/>
+                                        <SolidColorBrush x:Key="SplitButtonBackgroundPressed"
+                                 Color="{ThemeResource SystemListMediumColor}"/>
+                                        <SolidColorBrush x:Key="SplitButtonBackgroundPointerOver"
+                                 Color="{ThemeResource SystemListLowColor}"/>
+                                        <SolidColorBrush x:Key="SplitButtonBorderBrush" Color="Transparent"/>
+                                        <SolidColorBrush x:Key="SplitButtonBorderBrushPointerOver"
+                                 Color="Transparent"/>
+                                        <SolidColorBrush x:Key="SplitButtonBorderBrushChecked"
+                                 Color="Transparent"/>
+                                    </SplitButton.Resources>
+                                    <SplitButton.Content>
+                                        <Viewbox Height="18" Margin="0,0,0,0">
+                                            <TextBlock x:Name="ZoomFactorTextBlock" Text="100%" />
+                                        </Viewbox>
+                                    </SplitButton.Content>
+                                    <SplitButton.Flyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Text="1000%" Tag="1000" Click="ZoomPresetMenuFlyoutItem_Click" />
+                                            <MenuFlyoutItem Text="750%" Tag="750" Click="ZoomPresetMenuFlyoutItem_Click"/>
+                                            <MenuFlyoutItem Text="500%" Tag="500" Click="ZoomPresetMenuFlyoutItem_Click"/>
+                                            <MenuFlyoutItem Text="400%" Tag="400" Click="ZoomPresetMenuFlyoutItem_Click"/>
+                                            <MenuFlyoutItem Text="300%" Tag="300" Click="ZoomPresetMenuFlyoutItem_Click"/>
+                                            <MenuFlyoutItem Text="200%" Tag="200" Click="ZoomPresetMenuFlyoutItem_Click"/>
+                                            <MenuFlyoutItem Text="150%" Tag="150" Click="ZoomPresetMenuFlyoutItem_Click"/>
+                                            <MenuFlyoutItem Text="100%" Tag="100" Click="ZoomPresetMenuFlyoutItem_Click"/>
+                                            <MenuFlyoutItem Text="75%" Tag="75" Click="ZoomPresetMenuFlyoutItem_Click"/>
+                                            <MenuFlyoutItem Text="50%" Tag="50" Click="ZoomPresetMenuFlyoutItem_Click"/>
+                                            <MenuFlyoutItem Text="25%" Tag="25" Click="ZoomPresetMenuFlyoutItem_Click"/>
+                                        </MenuFlyout>
+                                    </SplitButton.Flyout>
+                                </SplitButton>
+
+                                <Button ToolTipService.ToolTip="Zoom in" Click="ZoomInButton_Click">
+                                    <Viewbox Width="16" Height="16">
+                                        <SymbolIcon Symbol="ZoomIn"/>
+                                    </Viewbox>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </AppBarElementContainer>
+                    <!-- end Zoom controls -->
+                </CommandBar>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

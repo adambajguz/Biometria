@@ -1,21 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -42,10 +31,10 @@ namespace ImageProcessor
                 encoder.SetSoftwareBitmap(softwareBitmap);
 
                 // Set additional encoding parameters, if needed
-                encoder.BitmapTransform.ScaledWidth = 320;
-                encoder.BitmapTransform.ScaledHeight = 240;
-                encoder.BitmapTransform.Rotation = Windows.Graphics.Imaging.BitmapRotation.Clockwise90Degrees;
-                encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Fant;
+                //encoder.BitmapTransform.ScaledWidth = 320;
+                //encoder.BitmapTransform.ScaledHeight = 240;
+                //encoder.BitmapTransform.Rotation = Windows.Graphics.Imaging.BitmapRotation.Clockwise90Degrees;
+                //encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Fant;
                 encoder.IsThumbnailGenerated = true;
 
                 try
@@ -118,12 +107,51 @@ namespace ImageProcessor
                 // Set the source of the Image control
                 inputImage.Source = source;
 
+                ZoomFactorTextBlock.Text = inputImageScroll.ZoomFactor * 100 + "%";
+
                 ImageFileTextBox.Text = inputFile.Path;
+                ImageResolution.Text = softwareBitmap.PixelWidth + " x " + softwareBitmap.PixelHeight + " (" + softwareBitmap.BitmapPixelFormat.ToString() + ")";
             }
             else
             {
                 //Operation cancelled
             }
         }
+        private void ZoomOutButton_Click(object sender, RoutedEventArgs e)
+        {
+            float zoom = inputImageScroll.ZoomFactor - (float)0.25;
+            if (zoom < (float)0.25)
+                zoom = (float)0.25;
+
+            ZoomFactorTextBlock.Text = Math.Ceiling(zoom * 100) + "%";
+
+            inputImageScroll.ChangeView(null, null, zoom);
+
+        }
+        private void ZoomInButton_Click(object sender, RoutedEventArgs e)
+        {
+            float zoom = inputImageScroll.ZoomFactor + (float)0.25;
+            if (zoom > 10)
+                zoom = 10;
+
+            ZoomFactorTextBlock.Text = Math.Ceiling(zoom * 100) + "%";
+
+            inputImageScroll.ChangeView(null, null, zoom);
+        }
+
+        private void ZoomPresetMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuFlyoutItem menuFlyoutItem = (MenuFlyoutItem)sender;
+
+            if (Int32.TryParse(menuFlyoutItem.Tag.ToString(), out int x))
+            {
+                float zoom = x / 100;
+
+                ZoomFactorTextBlock.Text = menuFlyoutItem.Tag + "%";
+
+                inputImageScroll.ChangeView(null, null, zoom);
+            }
+        }
+
     }
 }
