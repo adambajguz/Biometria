@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -64,6 +65,7 @@ namespace ImageProcessor
 
             }
         }
+        private StorageFile InputFileImage;
 
         private async void OpenImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
@@ -72,16 +74,21 @@ namespace ImageProcessor
                 ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail,
                 SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary
             };
+
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".jpeg");
             picker.FileTypeFilter.Add(".png");
             picker.FileTypeFilter.Add(".bmp");
+            picker.FileTypeFilter.Add(".gif");
+            picker.FileTypeFilter.Add(".tif");
+            picker.FileTypeFilter.Add(".tiff");
 
-            Windows.Storage.StorageFile inputFile = await picker.PickSingleFileAsync();
+            StorageFile inputFile = await picker.PickSingleFileAsync();
             if (inputFile != null)
             {
                 // Application now has read/write access to the picked file
 
+                InputFileImage = inputFile;
 
                 //https://docs.microsoft.com/en-us/windows/uwp/audio-video-camera/imaging
                 SoftwareBitmap softwareBitmap;
@@ -103,20 +110,22 @@ namespace ImageProcessor
 
                 var source = new SoftwareBitmapSource();
                 await source.SetBitmapAsync(softwareBitmap);
-
+                
                 // Set the source of the Image control
                 inputImage.Source = source;
 
                 ZoomFactorTextBlock.Text = inputImageScroll.ZoomFactor * 100 + "%";
 
                 ImageFileTextBox.Text = inputFile.Path;
-                ImageResolution.Text = softwareBitmap.PixelWidth + " x " + softwareBitmap.PixelHeight + " (" + softwareBitmap.BitmapPixelFormat.ToString() + ")";
+                ImageResolution.Text = softwareBitmap.PixelWidth + " x " + softwareBitmap.PixelHeight;
             }
             else
             {
                 //Operation cancelled
             }
         }
+
+
         private void ZoomOutButton_Click(object sender, RoutedEventArgs e)
         {
             float zoom = inputImageScroll.ZoomFactor - (float)0.25;
@@ -128,7 +137,7 @@ namespace ImageProcessor
             inputImageScroll.ChangeView(null, null, zoom);
 
         }
-        private void ZoomInButton_Click(object sender, RoutedEventArgs e)
+        private async void ZoomInButton_Click(object sender, RoutedEventArgs e)
         {
             float zoom = inputImageScroll.ZoomFactor + (float)0.25;
             if (zoom > 10)

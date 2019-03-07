@@ -75,18 +75,18 @@
 
             <ScrollViewer x:Name="inputImageScroll" Grid.Row="2" Grid.Column="0" 
                           ZoomMode="Enabled" MinZoomFactor="0.25" 
-                          HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                          HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" UseLayoutRounding="True">
                 <Image x:Name="inputImage" MaxWidth="{Binding ActualWidth, ElementName=inputImageScroll}"
-                       MaxHeight="{Binding ActualHeight, ElementName=inputImageScroll}"/>
+                       MaxHeight="{Binding ActualHeight, ElementName=inputImageScroll}" UseLayoutRounding="True" Stretch="Uniform"/>
             </ScrollViewer>
             
             <TextBlock Grid.Row="1" Grid.Column="1" Text="Processed image:" VerticalAlignment="Center" Margin="8,0,8,0"/>
 
             <ScrollViewer x:Name="outputImageScroll" Grid.Row="2" Grid.Column="1" 
                           ZoomMode="Enabled" MinZoomFactor="0.25" 
-                          HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                          HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  UseLayoutRounding="True">
                 <Image x:Name="outputImage" MaxWidth="{Binding ActualWidth, ElementName=outputImageScroll}"
-                       MaxHeight="{Binding ActualHeight, ElementName=inputImageScroll}"/>
+                       MaxHeight="{Binding ActualHeight, ElementName=outputImageScroll}" UseLayoutRounding="True" Stretch="Uniform"/>
             </ScrollViewer>
 
             <Grid Grid.Row="3" Grid.Column="0"  Grid.ColumnSpan="2" Margin="8,8,8,8" >
