@@ -25,7 +25,7 @@
                     <MenuFlyoutItem Text="Other Formats..."/>
                 </MenuFlyoutSubItem>
                 <MenuFlyoutItem Text="Open image..." Click="OpenImageMenuFlyoutItem_Click"/>
-                <MenuFlyoutItem Text="Save"/>
+                <MenuFlyoutItem Text="Save" Click="SaveImageMenuFlyoutItem_Click"/>
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem Text="Exit"/>
             </MenuBarItem>
@@ -35,6 +35,11 @@
                 <MenuFlyoutItem Text="Cut"/>
                 <MenuFlyoutItem Text="Copy"/>
                 <MenuFlyoutItem Text="Paste"/>
+            </MenuBarItem>
+
+
+            <MenuBarItem Title="Image">
+                <MenuFlyoutItem Text="Get/Set pixel color.." Click="GetSetPixelMenuFlyoutItem_Click"/>
             </MenuBarItem>
 
             <MenuBarItem Title="Help">
@@ -66,7 +71,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Column="0" Text="Image path:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                <TextBox x:Name="ImageFileTextBox" Grid.Column="1"/>
+                <TextBox x:Name="ImageFileTextBox" Grid.Column="1" IsReadOnly="True"/>
                 <TextBlock Text="Image resolution:" Grid.Column="2" VerticalAlignment="Center" Margin="16,0,8,0" />
                 <TextBlock x:Name="ImageResolution" Grid.Column="3" VerticalAlignment="Center" />
             </Grid>
@@ -135,7 +140,7 @@
                                         <SymbolIcon Symbol="ZoomOut"/>
                                     </Viewbox>
                                 </Button>
-                                <SplitButton ToolTipService.ToolTip="Alignment">
+                                <SplitButton ToolTipService.ToolTip="Alignment" Click="SplitButton_Click">
                                     <SplitButton.Resources>
                                         <!-- Override default brushes to make the SplitButton 
                      match other command bar elements. -->

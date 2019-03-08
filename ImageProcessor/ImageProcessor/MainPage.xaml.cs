@@ -1,8 +1,11 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.Storage.Provider;
 using Windows.Storage.Streams;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
@@ -16,17 +19,146 @@ namespace ImageProcessor
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private SoftwareBitmap SoftwareBitmap;
+
         public MainPage()
         {
             this.InitializeComponent();
         }
 
+
+        private async void OpenImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var picker = new Windows.Storage.Pickers.FileOpenPicker
+            {
+                ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail,
+                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary
+            };
+
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".jpeg");
+            picker.FileTypeFilter.Add(".png");
+            picker.FileTypeFilter.Add(".bmp");
+            picker.FileTypeFilter.Add(".gif");
+            picker.FileTypeFilter.Add(".tif");
+            picker.FileTypeFilter.Add(".tiff");
+
+            StorageFile inputFile = await picker.PickSingleFileAsync();
+            if (inputFile != null)
+            {
+                // Application now has read/write access to the picked file
+
+                //https://docs.microsoft.com/en-us/windows/uwp/audio-video-camera/imaging
+                SoftwareBitmap softwareBitmap;
+
+                using (IRandomAccessStream stream = await inputFile.OpenAsync(FileAccessMode.Read))
+                {
+                    // Create the decoder from the stream
+                    BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+
+                    // Get the SoftwareBitmap representation of the file
+                    softwareBitmap = await decoder.GetSoftwareBitmapAsync();
+                    SoftwareBitmap = await decoder.GetSoftwareBitmapAsync();
+
+                    PixelDataProvider data = await decoder.GetPixelDataAsync();
+
+                    var bytes = data.DetachPixelData();
+
+                    var pixel = GetPixel(bytes, 1, 1, decoder.PixelWidth, decoder.PixelHeight);
+                }
+
+
+                if (softwareBitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8 || softwareBitmap.BitmapAlphaMode == BitmapAlphaMode.Straight)
+                {
+                    softwareBitmap = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+                }
+
+                var source = new SoftwareBitmapSource();
+                await source.SetBitmapAsync(softwareBitmap);
+
+                // Set the source of the Image control
+                inputImage.Source = source;
+
+                ZoomFactorTextBlock.Text = inputImageScroll.ZoomFactor * 100 + "%";
+
+                ImageFileTextBox.Text = inputFile.Path;
+                ImageResolution.Text = softwareBitmap.PixelWidth + " x " + softwareBitmap.PixelHeight;
+            }
+            else
+            {
+                //Operation cancelled
+            }
+        }
+
+        public Color GetPixel(byte[] pixels, int x, int y, uint width, uint height)
+        {
+            int i = x;
+            int j = y;
+            int k = (i * (int)width + j) * 3;
+            var r = pixels[k + 0];
+            var g = pixels[k + 1];
+            var b = pixels[k + 2];
+            return Color.FromArgb(0, r, g, b);
+        }
+
+        private async void SaveImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+
+            FileSavePicker savePicker = new FileSavePicker
+            {
+                SuggestedStartLocation = PickerLocationId.PicturesLibrary
+            };
+            // Dropdown of file types the user can save the file as
+            savePicker.FileTypeChoices.Add(".jpg", new List<string>() { ".jpg" });
+            savePicker.FileTypeChoices.Add(".jpeg", new List<string>() { ".jpeg" });
+            savePicker.FileTypeChoices.Add(".png", new List<string>() { ".png" });
+            savePicker.FileTypeChoices.Add(".bmp", new List<string>() { ".bmp" });
+            savePicker.FileTypeChoices.Add(".gif", new List<string>() { ".gif" });
+            savePicker.FileTypeChoices.Add(".tiff", new List<string>() { ".tiff" });
+            savePicker.FileTypeChoices.Add(".tif", new List<string>() { ".tif" });
+            // Default file name if the user does not type one in or select a file to replace
+            savePicker.SuggestedFileName = "New Document";
+
+            StorageFile file = await savePicker.PickSaveFileAsync();
+            if (file != null)
+            {
+                // Prevent updates to the remote version of the file until we finish making changes and call CompleteUpdatesAsync.
+                CachedFileManager.DeferUpdates(file);
+                // write to file
+                SaveSoftwareBitmapToFile(SoftwareBitmap, file);
+
+
+
+                // Let Windows know that we're finished changing the file so the other app can update the remote version of the file.
+                // Completing updates may require Windows to ask for user input.
+                FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
+                if (status == FileUpdateStatus.Complete)
+                {
+                    //OutputTextBlock.Text = "File " + file.Name + " was saved.";
+                }
+                else
+                {
+                    //OutputTextBlock.Text = "File " + file.Name + " couldn't be saved.";
+                }
+            }
+            else
+            {
+                //OutputTextBlock.Text = "Operation cancelled.";
+            }
+
+        }
+
         private async void SaveSoftwareBitmapToFile(SoftwareBitmap softwareBitmap, StorageFile outputFile)
         {
+            Guid? encoderType = FileTypeExtensionToBitmapEncoder(outputFile.FileType);
+
+            if (encoderType == null)
+                return;
+
             using (IRandomAccessStream stream = await outputFile.OpenAsync(FileAccessMode.ReadWrite))
             {
                 // Create an encoder with the desired format
-                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
+                BitmapEncoder encoder = await BitmapEncoder.CreateAsync((Guid)encoderType, stream);
 
                 // Set the software bitmap
                 encoder.SetSoftwareBitmap(softwareBitmap);
@@ -65,87 +197,52 @@ namespace ImageProcessor
 
             }
         }
-        private StorageFile InputFileImage;
 
-        private async void OpenImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private Guid? FileTypeExtensionToBitmapEncoder(string extension)
         {
-            var picker = new Windows.Storage.Pickers.FileOpenPicker
+            switch (extension)
             {
-                ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail,
-                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary
-            };
+                case ".jpg":
+                case ".jpeg":
+                    return BitmapEncoder.JpegEncoderId;
 
-            picker.FileTypeFilter.Add(".jpg");
-            picker.FileTypeFilter.Add(".jpeg");
-            picker.FileTypeFilter.Add(".png");
-            picker.FileTypeFilter.Add(".bmp");
-            picker.FileTypeFilter.Add(".gif");
-            picker.FileTypeFilter.Add(".tif");
-            picker.FileTypeFilter.Add(".tiff");
+                case ".png":
+                    return BitmapEncoder.PngEncoderId;
 
-            StorageFile inputFile = await picker.PickSingleFileAsync();
-            if (inputFile != null)
-            {
-                // Application now has read/write access to the picked file
+                case ".bmp":
+                    return BitmapEncoder.BmpEncoderId;
 
-                InputFileImage = inputFile;
+                case ".gif":
+                    return BitmapEncoder.GifEncoderId;
 
-                //https://docs.microsoft.com/en-us/windows/uwp/audio-video-camera/imaging
-                SoftwareBitmap softwareBitmap;
-
-                using (IRandomAccessStream stream = await inputFile.OpenAsync(FileAccessMode.Read))
-                {
-                    // Create the decoder from the stream
-                    BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
-
-                    // Get the SoftwareBitmap representation of the file
-                    softwareBitmap = await decoder.GetSoftwareBitmapAsync();
-                }
-
-
-                if (softwareBitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8 || softwareBitmap.BitmapAlphaMode == BitmapAlphaMode.Straight)
-                {
-                    softwareBitmap = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
-                }
-
-                var source = new SoftwareBitmapSource();
-                await source.SetBitmapAsync(softwareBitmap);
-                
-                // Set the source of the Image control
-                inputImage.Source = source;
-
-                ZoomFactorTextBlock.Text = inputImageScroll.ZoomFactor * 100 + "%";
-
-                ImageFileTextBox.Text = inputFile.Path;
-                ImageResolution.Text = softwareBitmap.PixelWidth + " x " + softwareBitmap.PixelHeight;
+                case ".tiff":
+                case ".tif":
+                    return BitmapEncoder.TiffEncoderId;
             }
-            else
-            {
-                //Operation cancelled
-            }
+
+            return null;
         }
-
 
         private void ZoomOutButton_Click(object sender, RoutedEventArgs e)
         {
-            float zoom = inputImageScroll.ZoomFactor - (float)0.25;
-            if (zoom < (float)0.25)
-                zoom = (float)0.25;
+            double zoom = inputImageScroll.ZoomFactor - 0.25;
+            if (zoom < 0.25)
+                zoom = 0.25;
 
             ZoomFactorTextBlock.Text = Math.Ceiling(zoom * 100) + "%";
 
-            inputImageScroll.ChangeView(null, null, zoom);
+            inputImageScroll.ChangeView(null, null, (float)zoom);
 
         }
-        private async void ZoomInButton_Click(object sender, RoutedEventArgs e)
+        private void ZoomInButton_Click(object sender, RoutedEventArgs e)
         {
-            float zoom = inputImageScroll.ZoomFactor + (float)0.25;
+            double zoom = inputImageScroll.ZoomFactor + 0.25;
             if (zoom > 10)
                 zoom = 10;
 
             ZoomFactorTextBlock.Text = Math.Ceiling(zoom * 100) + "%";
 
-            inputImageScroll.ChangeView(null, null, zoom);
+            inputImageScroll.ChangeView(null, null, (float)zoom);
         }
 
         private void ZoomPresetMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -160,6 +257,19 @@ namespace ImageProcessor
 
                 inputImageScroll.ChangeView(null, null, zoom);
             }
+        }
+
+        private void SplitButton_Click(SplitButton sender, SplitButtonClickEventArgs args)
+        {
+            ZoomFactorTextBlock.Text = "100%";
+
+            inputImageScroll.ChangeView(null, null, 1);
+        }
+
+        private async void GetSetPixelMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            GetSetPixelColorDialog dialog = new GetSetPixelColorDialog(SoftwareBitmap);
+            await dialog.ShowAsync();
         }
 
     }
