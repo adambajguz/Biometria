@@ -25,7 +25,8 @@
                     <MenuFlyoutItem Text="Other Formats..."/>
                 </MenuFlyoutSubItem>
                 <MenuFlyoutItem Text="Open image..." Click="OpenImageMenuFlyoutItem_Click"/>
-                <MenuFlyoutItem Text="Save" Click="SaveImageMenuFlyoutItem_Click"/>
+                <MenuFlyoutItem Text="Save input as..." Click="SaveInputAsImageMenuFlyoutItem_Click"/>
+                <MenuFlyoutItem Text="Save output as..." Click="SaveOutputAsImageMenuFlyoutItem_Click"/>
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem Text="Exit"/>
             </MenuBarItem>
@@ -43,7 +44,7 @@
             </MenuBarItem>
 
             <MenuBarItem Title="Help">
-                <MenuFlyoutItem Text="About"/>
+                <MenuFlyoutItem Text="About" Click="AboutMenuFlyoutItem_Click"/>
             </MenuBarItem>
         </MenuBar>
 
@@ -80,7 +81,7 @@
 
             <ScrollViewer x:Name="inputImageScroll" Grid.Row="2" Grid.Column="0" 
                           ZoomMode="Enabled" MinZoomFactor="0.25" 
-                          HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" UseLayoutRounding="True">
+                          HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" ViewChanged="InputImageScroll_ViewChanged">
                 <Image x:Name="inputImage" MaxWidth="{Binding ActualWidth, ElementName=inputImageScroll}"
                        MaxHeight="{Binding ActualHeight, ElementName=inputImageScroll}" UseLayoutRounding="True" Stretch="Uniform"/>
             </ScrollViewer>

@@ -31,16 +31,24 @@
         <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Position:" Margin="4" VerticalAlignment="Top" />
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="X:" Margin="4" VerticalAlignment="Center" />
-        <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="4"/>
+        <TextBox x:Name="XTextBox" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="4" TextChanged="TextBox_TextChanged" TextChanging="TextBox_TextChanging"/>
         
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Y:" Margin="4" VerticalAlignment="Center" />
-        <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Margin="4"/>
+        <TextBox x:Name="YTextBox"  Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Margin="4" TextChanged="TextBox_TextChanged_1" TextChanging="TextBox_TextChanging_1"/>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Text="Original color:" Margin="4,24,4,4" VerticalAlignment="Top" />
-        <Rectangle x:Name="OriginalColorPreview" Grid.Row="4" Height="64" Grid.Column="0" Grid.ColumnSpan="2" Stroke="Gray" StrokeThickness="2"/>
-        
+        <Rectangle x:Name="OriginalColorPreview" Grid.Row="4" Height="64" Grid.Column="0" Grid.ColumnSpan="2" Stroke="Gray" StrokeThickness="2">
+            <ToolTipService.ToolTip>
+                <ToolTip x:Name="OriginalColorPreviewTooltip" Content=""/>
+            </ToolTipService.ToolTip>
+        </Rectangle>
+
         <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="New color:" Margin="4,8,4,4" VerticalAlignment="Top" />
-        <Rectangle x:Name="NewColorPreview" Grid.Row="6" Height="64" Grid.Column="0" Grid.ColumnSpan="2" Stroke="Gray" StrokeThickness="2"/>
+        <Rectangle x:Name="NewColorPreview" Grid.Row="6" Height="64" Grid.Column="0" Grid.ColumnSpan="2" Stroke="Gray" StrokeThickness="2">
+            <ToolTipService.ToolTip>
+                <ToolTip x:Name="NewColorPreviewTooltip" Content=""/>
+            </ToolTipService.ToolTip>
+        </Rectangle>
 
         <Button x:Name="ApplyColorButton" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,4,0,0" HorizontalAlignment="Stretch" Click="ApplyColorButton_Click">
             <StackPanel>
@@ -49,7 +57,7 @@
             </StackPanel>
         </Button>
 
-        <ColorPicker Grid.Row="0" Grid.Column="2" Grid.RowSpan="9" Margin="12,0,0,0" ColorSpectrumShape="Box" ElementSoundMode="Off" IsAlphaEnabled="True" IsColorPreviewVisible="False" ColorChanged="ColorPicker_ColorChanged"/>
+        <ColorPicker x:Name="PixelColorPicker" Grid.Row="0" Grid.Column="2" Grid.RowSpan="9" Margin="12,0,0,0" ColorSpectrumShape="Box" ElementSoundMode="Off" IsAlphaEnabled="True" IsColorPreviewVisible="False" ColorChanged="ColorPicker_ColorChanged" IsAlphaSliderVisible="False" IsAlphaTextInputVisible="False"/>
     </Grid>
 </ContentDialog>
 
