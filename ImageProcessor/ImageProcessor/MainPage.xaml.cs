@@ -1,10 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.Graphics.Canvas;
+using System;
+using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.Storage.Provider;
 using Windows.Storage.Streams;
+using Windows.UI;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
@@ -18,16 +23,20 @@ namespace ImageProcessor
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private SoftwareBitmap InputSoftwareBitmap;
-
-        private SoftwareBitmap OutputSoftwareBitmap;
-        private PixelDataProvider OutputImagePixelDataProvider;
-        private BitmapDecoder DecoderOutputImage;
+        private double Zoom = 1;
 
         public MainPage()
         {
             this.InitializeComponent();
         }
+
+        IRandomAccessStream InputImageStream;
+        CanvasVirtualBitmap InputVirtualBitmap;
+        CanvasVirtualBitmapOptions InputVirtualBitmapOptions;
+
+        IRandomAccessStream OutputImageStream;
+        CanvasVirtualBitmap OutputVirtualBitmap;
+        CanvasVirtualBitmapOptions OutputVirtualBitmapOptions;
 
 
         private async void OpenImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -49,221 +58,161 @@ namespace ImageProcessor
             StorageFile inputFile = await picker.PickSingleFileAsync();
             if (inputFile != null)
             {
-                // Application now has read/write access to the picked file
+                if (InputImageStream != null)
+                {
+                    InputImageStream.Dispose();
+                    InputImageStream = null;
+                }
 
-                //https://docs.microsoft.com/en-us/windows/uwp/audio-video-camera/imaging
-                SoftwareBitmap softwareBitmap;
-                SoftwareBitmap softwareBitmapOutput;
-
+                WriteableBitmap writeableInputImage;
                 using (IRandomAccessStream stream = await inputFile.OpenAsync(FileAccessMode.Read))
                 {
-                    {
-                        // Create the decoder from the stream
-                        BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+                    SoftwareBitmap softwareBitmap1;
+                    BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+                    softwareBitmap1 = await decoder.GetSoftwareBitmapAsync();
+                    writeableInputImage = new WriteableBitmap(softwareBitmap1.PixelWidth, softwareBitmap1.PixelHeight);
+                    writeableInputImage.SetSource(stream);
+                    writeableInputImage.SetPixel(0, 0, Color.FromArgb(255, 255, 0, 0));
+                    writeableInputImage.SetPixel(0, 1, Color.FromArgb(255, 255, 0, 0));
+                    writeableInputImage.SetPixel(0, 2, Color.FromArgb(255, 255, 0, 0));
+                    writeableInputImage.SetPixel(0, 3, Color.FromArgb(255, 255, 0, 0));
+                    writeableInputImage.SetPixel(0, 4, Color.FromArgb(255, 255, 0, 0));
+                    writeableInputImage.SetPixel(0, 5, Color.FromArgb(255, 255, 0, 0));
 
-                        // Get the SoftwareBitmap representation of the file
-                        softwareBitmap = await decoder.GetSoftwareBitmapAsync();
-                        InputSoftwareBitmap = await decoder.GetSoftwareBitmapAsync();
-                    }
+                    InputImageStream = stream;
+                    InputVirtualBitmapOptions = CanvasVirtualBitmapOptions.None;
 
-                    {
-                        DecoderOutputImage = await BitmapDecoder.CreateAsync(stream);
+                    await LoadInputVirtualBitmap();
 
-                        // Get the SoftwareBitmap representation of the file
-                        softwareBitmapOutput = await DecoderOutputImage.GetSoftwareBitmapAsync();
-                        OutputSoftwareBitmap = await DecoderOutputImage.GetSoftwareBitmapAsync();
+
+                    SoftwareBitmap softWriteableInputImage = SoftwareBitmap.CreateCopyFromBuffer(writeableInputImage.PixelBuffer, BitmapPixelFormat.Bgra8, writeableInputImage.PixelWidth, writeableInputImage.PixelHeight);
 
 
 
+                    InputImageStream = await EncodedBytes(softWriteableInputImage, BitmapEncoder.PngEncoderId);
+                    InputVirtualBitmapOptions = CanvasVirtualBitmapOptions.None;
 
-                        OutputImagePixelDataProvider = await DecoderOutputImage.GetPixelDataAsync();
+                    await LoadInputVirtualBitmap();
+                    
 
-                    }
                 }
 
+
+
+
+
+
+
+
+                //  inputImage.Source = writeableInputImage;
+
+
+                WriteableBitmap writableOutputImage;
+                using (IRandomAccessStream stream = await inputFile.OpenAsync(FileAccessMode.Read))
                 {
-                    if (softwareBitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8 || softwareBitmap.BitmapAlphaMode == BitmapAlphaMode.Straight)
-                    {
-                        softwareBitmap = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
-                    }
-
-
-                    var source = new SoftwareBitmapSource();
-                    await source.SetBitmapAsync(softwareBitmap);
-
-                    // Set the source of the Image control
-                    inputImage.Source = source;
-
-                    ZoomFactorTextBlock.Text = inputImageScroll.ZoomFactor * 100 + "%";
-
-                    ImageFileTextBox.Text = inputFile.Path;
-                    ImageResolution.Text = softwareBitmap.PixelWidth + " x " + softwareBitmap.PixelHeight;
-
+                    SoftwareBitmap softwareBitmap1;
+                    BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+                    softwareBitmap1 = await decoder.GetSoftwareBitmapAsync();
+                    writableOutputImage = new WriteableBitmap(softwareBitmap1.PixelWidth, softwareBitmap1.PixelHeight);
+                    writableOutputImage.SetSource(stream);
                 }
 
-                {
-
-                    if (softwareBitmapOutput.BitmapPixelFormat != BitmapPixelFormat.Bgra8 || softwareBitmapOutput.BitmapAlphaMode == BitmapAlphaMode.Straight)
-                    {
-                        softwareBitmapOutput = SoftwareBitmap.Convert(softwareBitmapOutput, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
 
 
-                        var source = new SoftwareBitmapSource();
-                        await source.SetBitmapAsync(softwareBitmap);
-
-                        // Set the source of the Image control
-                        outputImage.Source = source;
-                    }
-                }
+                //outputImage.Source = writableOutputImage;
             }
             else
             {
                 //Operation cancelled
             }
+
+            //await Open();
         }
+
+        private async Task<IRandomAccessStream> EncodedBytes(SoftwareBitmap soft, Guid encoderId)
+        {
+
+            // First: Use an encoder to copy from SoftwareBitmap to an in-mem stream (FlushAsync)
+            // Next:  Use ReadAsync on the in-mem stream to get byte[] array
+
+            var ms = new InMemoryRandomAccessStream();
+            
+                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(encoderId, ms);
+                encoder.SetSoftwareBitmap(soft);
+
+                try
+                {
+                    await encoder.FlushAsync();
+                }   
+                catch (Exception ex) {
+
+                }
+
+
+                return ms;
+
+            
+        }
+
+
+        private async Task Open()
+        {
+            var filePicker = new FileOpenPicker
+            {
+                ViewMode = PickerViewMode.Thumbnail,
+                SuggestedStartLocation = PickerLocationId.PicturesLibrary
+            };
+
+            filePicker.FileTypeFilter.Add(".jpg");
+            filePicker.FileTypeFilter.Add(".jpeg");
+            filePicker.FileTypeFilter.Add(".png");
+            filePicker.FileTypeFilter.Add(".bmp");
+            filePicker.FileTypeFilter.Add(".gif");
+            filePicker.FileTypeFilter.Add(".tif");
+            filePicker.FileTypeFilter.Add(".tiff");
+
+            var file = await filePicker.PickSingleFileAsync();
+
+            if (file == null)
+                return;
+
+            if (InputImageStream != null)
+            {
+                InputImageStream.Dispose();
+                InputImageStream = null;
+            }
+
+            try
+            {
+                InputImageStream = await file.OpenReadAsync();
+                InputVirtualBitmapOptions = CanvasVirtualBitmapOptions.None;
+
+                await LoadInputVirtualBitmap();
+            }
+            catch
+            {
+                var message = string.Format("Error opening '{0}'", file.Name);
+
+                var messageBox = new MessageDialog(message, "Virtual Bitmap Example").ShowAsync();
+            }
+        }
+
+
+
 
         private async void SaveInputAsImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-
-            FileSavePicker savePicker = new FileSavePicker
-            {
-                SuggestedStartLocation = PickerLocationId.PicturesLibrary
-            };
-            // Dropdown of file types the user can save the file as
-            savePicker.FileTypeChoices.Add(".jpg", new List<string>() { ".jpg" });
-            savePicker.FileTypeChoices.Add(".jpeg", new List<string>() { ".jpeg" });
-            savePicker.FileTypeChoices.Add(".png", new List<string>() { ".png" });
-            savePicker.FileTypeChoices.Add(".bmp", new List<string>() { ".bmp" });
-            savePicker.FileTypeChoices.Add(".gif", new List<string>() { ".gif" });
-            savePicker.FileTypeChoices.Add(".tiff", new List<string>() { ".tiff" });
-            savePicker.FileTypeChoices.Add(".tif", new List<string>() { ".tif" });
-            // Default file name if the user does not type one in or select a file to replace
-            savePicker.SuggestedFileName = "New Document";
-
-            StorageFile file = await savePicker.PickSaveFileAsync();
-            if (file != null)
-            {
-                // Prevent updates to the remote version of the file until we finish making changes and call CompleteUpdatesAsync.
-                CachedFileManager.DeferUpdates(file);
-                // write to file
-                SaveSoftwareBitmapToFile(OutputSoftwareBitmap, file);
-
-
-
-                // Let Windows know that we're finished changing the file so the other app can update the remote version of the file.
-                // Completing updates may require Windows to ask for user input.
-                FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
-                if (status == FileUpdateStatus.Complete)
-                {
-                    //OutputTextBlock.Text = "File " + file.Name + " was saved.";
-                }
-                else
-                {
-                    //OutputTextBlock.Text = "File " + file.Name + " couldn't be saved.";
-                }
-            }
-            else
-            {
-                //OutputTextBlock.Text = "Operation cancelled.";
-            }
 
         }
 
         private async void SaveOutputAsImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
 
-            FileSavePicker savePicker = new FileSavePicker
-            {
-                SuggestedStartLocation = PickerLocationId.PicturesLibrary
-            };
-            // Dropdown of file types the user can save the file as
-            savePicker.FileTypeChoices.Add(".jpg", new List<string>() { ".jpg" });
-            savePicker.FileTypeChoices.Add(".jpeg", new List<string>() { ".jpeg" });
-            savePicker.FileTypeChoices.Add(".png", new List<string>() { ".png" });
-            savePicker.FileTypeChoices.Add(".bmp", new List<string>() { ".bmp" });
-            savePicker.FileTypeChoices.Add(".gif", new List<string>() { ".gif" });
-            savePicker.FileTypeChoices.Add(".tiff", new List<string>() { ".tiff" });
-            savePicker.FileTypeChoices.Add(".tif", new List<string>() { ".tif" });
-            // Default file name if the user does not type one in or select a file to replace
-            savePicker.SuggestedFileName = "New Document";
-
-            StorageFile file = await savePicker.PickSaveFileAsync();
-            if (file != null)
-            {
-                // Prevent updates to the remote version of the file until we finish making changes and call CompleteUpdatesAsync.
-                CachedFileManager.DeferUpdates(file);
-                // write to file
-                SaveSoftwareBitmapToFile(InputSoftwareBitmap, file);
-
-
-
-                // Let Windows know that we're finished changing the file so the other app can update the remote version of the file.
-                // Completing updates may require Windows to ask for user input.
-                FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
-                if (status == FileUpdateStatus.Complete)
-                {
-                    //OutputTextBlock.Text = "File " + file.Name + " was saved.";
-                }
-                else
-                {
-                    //OutputTextBlock.Text = "File " + file.Name + " couldn't be saved.";
-                }
-            }
-            else
-            {
-                //OutputTextBlock.Text = "Operation cancelled.";
-            }
-
         }
 
         private async void SaveSoftwareBitmapToFile(SoftwareBitmap softwareBitmap, StorageFile outputFile)
         {
-            Guid? encoderType = FileTypeExtensionToBitmapEncoder(outputFile.FileType);
 
-            if (encoderType == null)
-                return;
-
-            using (IRandomAccessStream stream = await outputFile.OpenAsync(FileAccessMode.ReadWrite))
-            {
-                // Create an encoder with the desired format
-                BitmapEncoder encoder = await BitmapEncoder.CreateAsync((Guid)encoderType, stream);
-
-                // Set the software bitmap
-                encoder.SetSoftwareBitmap(softwareBitmap);
-
-                // Set additional encoding parameters, if needed
-                //encoder.BitmapTransform.ScaledWidth = 320;
-                //encoder.BitmapTransform.ScaledHeight = 240;
-                //encoder.BitmapTransform.Rotation = Windows.Graphics.Imaging.BitmapRotation.Clockwise90Degrees;
-                //encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Fant;
-                encoder.IsThumbnailGenerated = true;
-
-                try
-                {
-                    await encoder.FlushAsync();
-                }
-                catch (Exception err)
-                {
-                    const int WINCODEC_ERR_UNSUPPORTEDOPERATION = unchecked((int)0x88982F81);
-                    switch (err.HResult)
-                    {
-                        case WINCODEC_ERR_UNSUPPORTEDOPERATION:
-                            // If the encoder does not support writing a thumbnail, then try again
-                            // but disable thumbnail generation.
-                            encoder.IsThumbnailGenerated = false;
-                            break;
-                        default:
-                            throw;
-                    }
-                }
-
-                if (encoder.IsThumbnailGenerated == false)
-                {
-                    await encoder.FlushAsync();
-                }
-
-
-            }
         }
 
         private Guid? FileTypeExtensionToBitmapEncoder(string extension)
@@ -293,24 +242,28 @@ namespace ImageProcessor
 
         private void ZoomOutButton_Click(object sender, RoutedEventArgs e)
         {
-            double zoom = inputImageScroll.ZoomFactor - 0.25;
-            if (zoom < 0.25)
-                zoom = 0.25;
+            if (Zoom < 0.25)
+                Zoom = 0.25;
+            else
+                Zoom -= 0.25;
 
-            ZoomFactorTextBlock.Text = Math.Ceiling(zoom * 100) + "%";
+            ZoomFactorTextBlock.Text = Math.Ceiling(Zoom * 100) + "%";
 
-            inputImageScroll.ChangeView(null, null, (float)zoom);
+            //inputImageScroll.ChangeView(null, null, (float)zoom);
+            InputImageCanvas.Invalidate();
+            OutputImageCanvas.Invalidate();
         }
 
         private void ZoomInButton_Click(object sender, RoutedEventArgs e)
         {
-            double zoom = inputImageScroll.ZoomFactor + 0.25;
-            if (zoom > 10)
-                zoom = 10;
+            if (Zoom > 10)
+                Zoom = 10;
+            else
+                Zoom += 0.25;
 
-            ZoomFactorTextBlock.Text = Math.Ceiling(zoom * 100) + "%";
-
-            inputImageScroll.ChangeView(null, null, (float)zoom);
+            ZoomFactorTextBlock.Text = Math.Ceiling(Zoom * 100) + "%";
+            InputImageCanvas.Invalidate();
+            OutputImageCanvas.Invalidate();
         }
 
         private void ZoomPresetMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -319,25 +272,30 @@ namespace ImageProcessor
 
             if (Int32.TryParse(menuFlyoutItem.Tag.ToString(), out int x))
             {
-                float zoom = x / 100;
+                Zoom = x / 100;
 
                 ZoomFactorTextBlock.Text = menuFlyoutItem.Tag + "%";
 
-                inputImageScroll.ChangeView(null, null, zoom);
+                // inputImageScroll.ChangeView(null, null, zoom);
+                InputImageCanvas.Invalidate();
+                OutputImageCanvas.Invalidate();
             }
         }
 
         private void SplitButton_Click(SplitButton sender, SplitButtonClickEventArgs args)
         {
-            ZoomFactorTextBlock.Text = "100%";
+            Zoom = 1;
 
-            inputImageScroll.ChangeView(null, null, 1);
+            ZoomFactorTextBlock.Text = "100%";
+            //inputImageScroll.ChangeView(null, null, 1);
+            InputImageCanvas.Invalidate();
+            OutputImageCanvas.Invalidate();
         }
 
         private async void GetSetPixelMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            GetSetPixelColorDialog dialog = new GetSetPixelColorDialog(InputSoftwareBitmap, OutputImagePixelDataProvider, DecoderOutputImage);
-            await dialog.ShowAsync();
+            //GetSetPixelColorDialog dialog = new GetSetPixelColorDialog(InputSoftwareBitmap, OutputImagePixelDataProvider, DecoderOutputImage);
+            //await dialog.ShowAsync();
         }
 
         private async void AboutMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -357,9 +315,135 @@ namespace ImageProcessor
 
         }
 
-        private void InputImageScroll_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+
+        private void InputCanvasScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            outputImageScroll.ChangeView(inputImageScroll.HorizontalOffset, inputImageScroll.VerticalOffset, inputImageScroll.ZoomFactor);
+            InputImageCanvas.Invalidate();
+        }
+
+        private void InputCanvasScrollViewer_ViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
+        {
+            InputImageCanvas.Invalidate();
+        }
+
+        private void OutputCanvasScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            OutputImageCanvas.Invalidate();
+        }
+
+        private void OutputCanvasScrollViewer_ViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
+        {
+            OutputImageCanvas.Invalidate();
+        }
+
+        private void InputImageCanvas_CreateResources(Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
+        {
+            if (InputImageStream != null)
+            {
+                args.TrackAsyncAction(LoadInputVirtualBitmap().AsAsyncAction());
+            }
+        }
+
+        private void InputImageCanvas_RegionsInvalidated(Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs args)
+        {
+            foreach (var region in args.InvalidatedRegions)
+            {
+                using (var ds = InputImageCanvas.CreateDrawingSession(region))
+                {
+                    if (InputVirtualBitmap != null)
+                        ds.DrawImage(InputVirtualBitmap, new Rect(0, 0, region.Width * Zoom, region.Height * Zoom), new Rect(0, 0, region.Width, region.Height), 1.0f, CanvasImageInterpolation.NearestNeighbor);
+                }
+            }
+        }
+
+        private void OutputImageCanvas_CreateResources(Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
+        {
+            if (InputImageStream != null)
+            {
+                args.TrackAsyncAction(LoadOutputVirtualBitmap().AsAsyncAction());
+            }
+        }
+
+        private void OutputImageCanvas_RegionsInvalidated(Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs args)
+        {
+            foreach (var region in args.InvalidatedRegions)
+            {
+                using (var ds = OutputImageCanvas.CreateDrawingSession(region))
+                {
+                    if (OutputVirtualBitmap != null)
+                        ds.DrawImage(OutputVirtualBitmap, new Rect(0, 0, region.Width * Zoom, region.Height * Zoom), new Rect(0, 0, region.Width, region.Height), 1.0f, CanvasImageInterpolation.NearestNeighbor);
+                }
+            }
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            InputImageCanvas.RemoveFromVisualTree();
+            OutputImageCanvas.RemoveFromVisualTree();
+
+            InputImageCanvas = null;
+            OutputImageCanvas = null;
+        }
+
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            InputImageCanvas.Invalidate();
+            OutputImageCanvas.Invalidate();
+            InputCanvasScrollViewer.MaxWidth = double.MaxValue;
+            InputCanvasScrollViewer.MaxHeight = double.MaxValue;
+        }
+
+
+        private async Task LoadInputVirtualBitmap()
+        {
+            if (InputVirtualBitmap != null)
+            {
+                InputVirtualBitmap.Dispose();
+                InputVirtualBitmap = null;
+            }
+
+            //LoadedImageInfo = "";
+
+            InputVirtualBitmap = await CanvasVirtualBitmap.LoadAsync(InputImageCanvas.Device, InputImageStream, InputVirtualBitmapOptions);
+
+            if (InputImageCanvas == null)
+            {
+                // This can happen if the page is unloaded while LoadAsync is running
+                return;
+            }
+
+            var size = InputVirtualBitmap.Size;
+            InputImageCanvas.Width = size.Width * (Zoom + 1);
+            InputImageCanvas.Height = size.Height * (Zoom + 1);
+            InputImageCanvas.Invalidate();
+
+            //LoadedImageInfo = string.Format("{0}x{1} image, is {2}CachedOnDemand", size.Width, size.Height, virtualBitmap.IsCachedOnDemand ? "" : "not ");
+        }
+
+        private async Task LoadOutputVirtualBitmap()
+        {
+            if (OutputVirtualBitmap != null)
+            {
+                OutputVirtualBitmap.Dispose();
+                OutputVirtualBitmap = null;
+            }
+
+            //LoadedImageInfo = "";
+
+            OutputVirtualBitmap = await CanvasVirtualBitmap.LoadAsync(OutputImageCanvas.Device, OutputImageStream, OutputVirtualBitmapOptions);
+
+            if (OutputImageCanvas == null)
+            {
+                // This can happen if the page is unloaded while LoadAsync is running
+                return;
+            }
+
+            var size = OutputVirtualBitmap.Size;
+            OutputImageCanvas.Width = size.Width * (Zoom + 1);
+            OutputImageCanvas.Height = size.Height * (Zoom + 1);
+            OutputImageCanvas.Invalidate();
+
+            //LoadedImageInfo = string.Format("{0}x{1} image, is {2}CachedOnDemand", size.Width, size.Height, virtualBitmap.IsCachedOnDemand ? "" : "not ");
         }
     }
 }

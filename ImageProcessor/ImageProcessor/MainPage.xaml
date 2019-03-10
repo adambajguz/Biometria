@@ -5,8 +5,9 @@
     xmlns:local="using:ImageProcessor"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Unloaded="Page_Unloaded" SizeChanged="Page_SizeChanged">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -76,24 +77,48 @@
                 <TextBlock Text="Image resolution:" Grid.Column="2" VerticalAlignment="Center" Margin="16,0,8,0" />
                 <TextBlock x:Name="ImageResolution" Grid.Column="3" VerticalAlignment="Center" />
             </Grid>
-            
+
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Original image:" VerticalAlignment="Center" Margin="8,0,8,0"/>
 
-            <ScrollViewer x:Name="inputImageScroll" Grid.Row="2" Grid.Column="0" 
+            <!--<ScrollViewer x:Name="inputImageScroll" Grid.Row="2" Grid.Column="0" 
                           ZoomMode="Enabled" MinZoomFactor="0.25" 
                           HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" ViewChanged="InputImageScroll_ViewChanged">
-                <Image x:Name="inputImage" MaxWidth="{Binding ActualWidth, ElementName=inputImageScroll}"
-                       MaxHeight="{Binding ActualHeight, ElementName=inputImageScroll}" UseLayoutRounding="True" Stretch="Uniform"/>
+                <Image x:Name="inputImage" MaxWidth="{Binding ActualWidth, ElementName=inputImageScroll}" 
+
+                       MaxHeight="{Binding ActualHeight, ElementName=inputImageScroll}" UseLayoutRounding="False" Stretch="None"/>
+            </ScrollViewer>-->
+
+
+            <ScrollViewer Grid.Row="2" Grid.Column="0"  HorizontalScrollMode="Enabled" VerticalScrollMode="Enabled" ZoomMode="Disabled"
+                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                      x:Name="InputCanvasScrollViewer" ViewChanged="InputCanvasScrollViewer_ViewChanged" ViewChanging="InputCanvasScrollViewer_ViewChanging">
+                <Grid>
+                    <canvas:CanvasVirtualControl x:Name="InputImageCanvas"
+                                             CreateResources="InputImageCanvas_CreateResources" 
+                                             RegionsInvalidated="InputImageCanvas_RegionsInvalidated" ScrollViewer.HorizontalScrollBarVisibility="Visible"/>
+                </Grid>
             </ScrollViewer>
-            
+
+
+
             <TextBlock Grid.Row="1" Grid.Column="1" Text="Processed image:" VerticalAlignment="Center" Margin="8,0,8,0"/>
 
-            <ScrollViewer x:Name="outputImageScroll" Grid.Row="2" Grid.Column="1" 
+            <ScrollViewer Grid.Row="2" Grid.Column="1"  HorizontalScrollMode="Enabled" VerticalScrollMode="Enabled" ZoomMode="Disabled"
+                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                      x:Name="OutputCanvasScrollViewer" ViewChanged="OutputCanvasScrollViewer_ViewChanged" ViewChanging="OutputCanvasScrollViewer_ViewChanging">
+                <Grid>
+                    <canvas:CanvasVirtualControl x:Name="OutputImageCanvas"
+                                             CreateResources="OutputImageCanvas_CreateResources" 
+                                             RegionsInvalidated="OutputImageCanvas_RegionsInvalidated" ScrollViewer.HorizontalScrollBarVisibility="Visible"/>
+                </Grid>
+            </ScrollViewer>
+
+            <!--<ScrollViewer x:Name="outputImageScroll" Grid.Row="2" Grid.Column="1" 
                           ZoomMode="Enabled" MinZoomFactor="0.25" 
                           HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  UseLayoutRounding="True">
                 <Image x:Name="outputImage" MaxWidth="{Binding ActualWidth, ElementName=outputImageScroll}"
-                       MaxHeight="{Binding ActualHeight, ElementName=outputImageScroll}" UseLayoutRounding="True" Stretch="Uniform"/>
-            </ScrollViewer>
+                       MaxHeight="{Binding ActualHeight, ElementName=outputImageScroll}" UseLayoutRounding="False" Stretch="None"/>
+            </ScrollViewer>-->
 
             <Grid Grid.Row="3" Grid.Column="0"  Grid.ColumnSpan="2" Margin="8,8,8,8" >
                 <Grid.ColumnDefinitions>
@@ -134,7 +159,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                           
+
                             <StackPanel Orientation="Horizontal">
                                 <Button ToolTipService.ToolTip="Zoom out" Click="ZoomOutButton_Click">
                                     <Viewbox Width="16" Height="16">
