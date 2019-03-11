@@ -119,8 +119,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GetSetPixelColorDialog.xaml.cs">
-      <DependentUpon>GetSetPixelColorDialog.xaml</DependentUpon>
+    <Compile Include="PixelManagerDialog.xaml.cs">
+      <DependentUpon>PixelManagerDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -188,7 +188,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="GetSetPixelColorDialog.xaml">
+    <Page Include="PixelManagerDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -20,16 +20,10 @@
 
         <MenuBar Grid.Row="0">
             <MenuBarItem Title="File">
-                <MenuFlyoutSubItem Text="New">
-                    <MenuFlyoutItem Text="Plain Text Document"/>
-                    <MenuFlyoutItem Text="Rich Text Document"/>
-                    <MenuFlyoutItem Text="Other Formats..."/>
-                </MenuFlyoutSubItem>
                 <MenuFlyoutItem Text="Open image..." Click="OpenImageMenuFlyoutItem_Click"/>
-                <MenuFlyoutItem Text="Save input as..." Click="SaveInputAsImageMenuFlyoutItem_Click"/>
                 <MenuFlyoutItem Text="Save output as..." Click="SaveOutputAsImageMenuFlyoutItem_Click"/>
                 <MenuFlyoutSeparator />
-                <MenuFlyoutItem Text="Exit"/>
+                <MenuFlyoutItem Text="Exit" Click="ExitMenuFlyoutItem_Click"/>
             </MenuBarItem>
 
             <MenuBarItem Title="Edit">
@@ -39,9 +33,8 @@
                 <MenuFlyoutItem Text="Paste"/>
             </MenuBarItem>
 
-
-            <MenuBarItem Title="Image">
-                <MenuFlyoutItem Text="Get/Set pixel color.." Click="GetSetPixelMenuFlyoutItem_Click"/>
+            <MenuBarItem Title="Tools">
+                <MenuFlyoutItem Text="Pixel manager..." Click="OpenPixelManagerMenuFlyoutItem_Click"/>
             </MenuBarItem>
 
             <MenuBarItem Title="Help">

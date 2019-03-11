@@ -20,30 +20,24 @@ using Windows.UI.Xaml.Navigation;
 
 namespace ImageProcessor
 {
-    public enum GetSetPixelColorDialogExitResult
+    public enum PixelManagerDialogExitResult
     {
         Nothing,
         BitmapChanged
     }
 
-    public sealed partial class GetSetPixelColorDialog : ContentDialog
+    public sealed partial class PixelManagerDialog : ContentDialog
     {
-        public GetSetPixelColorDialogExitResult ExitResult { get; set; }
+        public PixelManagerDialogExitResult ExitResult { get; set; }
 
-        public int X { get; set; }
+        private WriteableBitmap editingBitmap;
 
-        public int Y { get; set; }
-
-        public int PixelColor { get; set; }
-
-        public WriteableBitmap EditingBitmap;
-
-        public GetSetPixelColorDialog(WriteableBitmap writeableBitmap)
+        public PixelManagerDialog(WriteableBitmap writeableBitmap)
         {
             this.InitializeComponent();
 
-            this.EditingBitmap = writeableBitmap;
-            this.ExitResult = GetSetPixelColorDialogExitResult.Nothing;
+            this.editingBitmap = writeableBitmap;
+            this.ExitResult = PixelManagerDialogExitResult.Nothing;
 
             OriginalColorPreview.Fill = new SolidColorBrush(Colors.White);
             OriginalColorPreviewTooltip.Content = "#FFFFFF";
@@ -70,26 +64,16 @@ namespace ImageProcessor
                 {
 
                     Color pixelColor = PixelColorPicker.Color;
-                    EditingBitmap.SetPixel(x, y, pixelColor);
+                    editingBitmap.SetPixel(x, y, pixelColor);
 
                     OriginalColorPreview.Fill = new SolidColorBrush(pixelColor);
                 }
             }
 
-            ExitResult = GetSetPixelColorDialogExitResult.BitmapChanged;
+            ExitResult = PixelManagerDialogExitResult.BitmapChanged;
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            GetColorOnPosition();
-        }
-
-        private void TextBox_TextChanged_1(object sender, TextChangedEventArgs e)
-        {
-            GetColorOnPosition();
-        }
-
-        private void GetColorOnPosition()
         {
             if (Int32.TryParse(XTextBox.Text, out int x))
             {
@@ -97,7 +81,7 @@ namespace ImageProcessor
                 if (Int32.TryParse(YTextBox.Text, out int y))
                 {
 
-                    Color pixelColor = EditingBitmap.GetPixel(x, y);
+                    Color pixelColor = editingBitmap.GetPixel(x, y);
                     PixelColorPicker.Color = pixelColor;
 
                     OriginalColorPreview.Fill = new SolidColorBrush(pixelColor);
@@ -110,12 +94,5 @@ namespace ImageProcessor
         {
             sender.Text = new String(sender.Text.Where(char.IsDigit).ToArray());
         }
-
-        private void TextBox_TextChanging_1(TextBox sender, TextBoxTextChangingEventArgs args)
-        {
-            sender.Text = new String(sender.Text.Where(char.IsDigit).ToArray());
-        }
-
-
     }
 }

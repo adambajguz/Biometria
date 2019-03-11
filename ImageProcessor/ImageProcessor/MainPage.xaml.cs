@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -31,7 +32,7 @@ namespace ImageProcessor
             }
             set
             {
-                if (value < 10 && value > 0.25)
+                if (value <= 10 && value >= 0.25)
                     zoom = value;
                 else
                     return;
@@ -295,7 +296,7 @@ namespace ImageProcessor
 
             if (Int32.TryParse(menuFlyoutItem.Tag.ToString(), out int x))
             {
-                Zoom = x;
+                Zoom = (double)x / 100;
             }
         }
 
@@ -305,12 +306,12 @@ namespace ImageProcessor
         }
 
 
-        private async void GetSetPixelMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void OpenPixelManagerMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            GetSetPixelColorDialog dialog = new GetSetPixelColorDialog(WritableOutputImage);
+            PixelManagerDialog dialog = new PixelManagerDialog(WritableOutputImage);
             await dialog.ShowAsync();
 
-            if (dialog.ExitResult == GetSetPixelColorDialogExitResult.BitmapChanged)
+            if (dialog.ExitResult == PixelManagerDialogExitResult.BitmapChanged)
             {
                 await UpdateOutputImage();
             }
@@ -467,6 +468,11 @@ namespace ImageProcessor
             OutputImageCanvas.Invalidate();
 
             //LoadedImageInfo = string.Format("{0}x{1} image, is {2}CachedOnDemand", size.Width, size.Height, virtualBitmap.IsCachedOnDemand ? "" : "not ");
+        }
+
+        private void ExitMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            CoreApplication.Exit();
         }
     }
 }
