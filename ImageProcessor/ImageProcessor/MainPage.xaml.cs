@@ -50,6 +50,11 @@ namespace ImageProcessor
         public MainPage()
         {
             this.InitializeComponent();
+
+            SaveMenuFlyoutItem.IsEnabled = false;
+            EditMenuBarItem.IsEnabled = false;
+            ToolsMenuBarItem.IsEnabled = false;
+            ZoomCommandBar.IsEnabled = false;
         }
 
         IRandomAccessStream InputImageStream;
@@ -78,6 +83,13 @@ namespace ImageProcessor
             StorageFile inputFile = await picker.PickSingleFileAsync();
             if (inputFile != null)
             {
+                SaveMenuFlyoutItem.IsEnabled = true;
+                EditMenuBarItem.IsEnabled = true;
+                ToolsMenuBarItem.IsEnabled = true;
+                ZoomCommandBar.IsEnabled = true;
+
+
+
                 if (InputImageStream != null)
                 {
                     InputImageStream.Dispose();

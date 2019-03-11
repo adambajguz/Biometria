@@ -21,19 +21,19 @@
         <MenuBar Grid.Row="0">
             <MenuBarItem Title="File">
                 <MenuFlyoutItem Text="Open image..." Click="OpenImageMenuFlyoutItem_Click"/>
-                <MenuFlyoutItem Text="Save output as..." Click="SaveOutputAsImageMenuFlyoutItem_Click"/>
+                <MenuFlyoutItem x:Name="SaveMenuFlyoutItem" Text="Save output as..." Click="SaveOutputAsImageMenuFlyoutItem_Click"/>
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem Text="Exit" Click="ExitMenuFlyoutItem_Click"/>
             </MenuBarItem>
 
-            <MenuBarItem Title="Edit">
+            <MenuBarItem Title="Edit" x:Name="EditMenuBarItem">
                 <MenuFlyoutItem Text="Undo"/>
                 <MenuFlyoutItem Text="Cut"/>
                 <MenuFlyoutItem Text="Copy"/>
                 <MenuFlyoutItem Text="Paste"/>
             </MenuBarItem>
 
-            <MenuBarItem Title="Tools">
+            <MenuBarItem Title="Tools" x:Name="ToolsMenuBarItem">
                 <MenuFlyoutItem Text="Pixel manager..." Click="OpenPixelManagerMenuFlyoutItem_Click"/>
             </MenuBarItem>
 
@@ -124,7 +124,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <CommandBar Grid.Column="1" DefaultLabelPosition="Right">
+                <CommandBar Grid.Column="1" DefaultLabelPosition="Right" x:Name="ZoomCommandBar">
                     <!-- Zoom controls -->
                     <AppBarElementContainer>
                         <AppBarElementContainer.Resources>
