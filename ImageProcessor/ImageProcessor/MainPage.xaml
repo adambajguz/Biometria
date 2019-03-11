@@ -61,7 +61,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="8,8,8,8" >
+            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="8,8,8,16" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="2*" />
@@ -75,7 +75,7 @@
                 <TextBlock Grid.Column="0" Text="Image path:" VerticalAlignment="Center" Margin="0,0,8,0"/>
                 <TextBox x:Name="ImageFileTextBox" Grid.Column="1" IsReadOnly="True"/>
                 <TextBlock Text="Image resolution:" Grid.Column="2" VerticalAlignment="Center" Margin="16,0,8,0" />
-                <TextBlock x:Name="ImageResolution" Grid.Column="3" VerticalAlignment="Center" />
+                <TextBlock x:Name="ImageResolution" Grid.Column="3" VerticalAlignment="Center" Text="n/a"/>
             </Grid>
 
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Original image:" VerticalAlignment="Center" Margin="8,0,8,0"/>
@@ -91,7 +91,8 @@
 
             <ScrollViewer Grid.Row="2" Grid.Column="0"  HorizontalScrollMode="Enabled" VerticalScrollMode="Enabled" ZoomMode="Disabled"
                       HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
-                      x:Name="InputCanvasScrollViewer" ViewChanged="InputCanvasScrollViewer_ViewChanged" ViewChanging="InputCanvasScrollViewer_ViewChanging">
+                      x:Name="InputCanvasScrollViewer" ViewChanged="InputCanvasScrollViewer_ViewChanged"
+                      ViewChanging="InputCanvasScrollViewer_ViewChanging" Margin="8" Background="#FFE6E6E6">
                 <Grid>
                     <canvas:CanvasVirtualControl x:Name="InputImageCanvas"
                                              CreateResources="InputImageCanvas_CreateResources" 
@@ -104,8 +105,9 @@
             <TextBlock Grid.Row="1" Grid.Column="1" Text="Processed image:" VerticalAlignment="Center" Margin="8,0,8,0"/>
 
             <ScrollViewer Grid.Row="2" Grid.Column="1"  HorizontalScrollMode="Enabled" VerticalScrollMode="Enabled" ZoomMode="Disabled"
-                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
-                      x:Name="OutputCanvasScrollViewer" ViewChanged="OutputCanvasScrollViewer_ViewChanged" ViewChanging="OutputCanvasScrollViewer_ViewChanging">
+                      HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"
+                      x:Name="OutputCanvasScrollViewer" ViewChanged="OutputCanvasScrollViewer_ViewChanged" 
+                      ViewChanging="OutputCanvasScrollViewer_ViewChanging" Margin="8" Background="#FFE6E6E6">
                 <Grid>
                     <canvas:CanvasVirtualControl x:Name="OutputImageCanvas"
                                              CreateResources="OutputImageCanvas_CreateResources" 

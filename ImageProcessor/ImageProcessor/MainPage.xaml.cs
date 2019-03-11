@@ -8,8 +8,6 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Provider;
 using Windows.Storage.Streams;
-using Windows.UI;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
@@ -23,7 +21,34 @@ namespace ImageProcessor
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private double Zoom = 1;
+        private double zoom = 1;
+
+        public double Zoom
+        {
+            get
+            {
+                return zoom;
+            }
+            set
+            {
+                if (value < 10 && value > 0.25)
+                    zoom = value;
+                else
+                    return;
+
+                ZoomFactorTextBlock.Text = (zoom * 100) + "%";
+
+                OutputCanvasScrollViewer.ChangeView(InputCanvasScrollViewer.HorizontalOffset, InputCanvasScrollViewer.VerticalOffset, null);
+                InputImageCanvas.Invalidate();
+                OutputImageCanvas.Invalidate();
+
+                var size = InputVirtualBitmap.Size;
+                InputImageCanvas.Width = size.Width * (zoom + 1);
+                InputImageCanvas.Height = size.Height * (zoom + 1);
+                OutputImageCanvas.Width = size.Width * (zoom + 1);
+                OutputImageCanvas.Height = size.Height * (zoom + 1);
+            }
+        }
 
         public MainPage()
         {
@@ -62,12 +87,14 @@ namespace ImageProcessor
                     InputImageStream = null;
                 }
 
-                WriteableBitmap writeableInputImage;
                 using (IRandomAccessStream stream = await inputFile.OpenAsync(FileAccessMode.Read))
                 {
-                    SoftwareBitmap softwareBitmap1;
+                    WriteableBitmap writeableInputImage;
+
                     BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
-                    softwareBitmap1 = await decoder.GetSoftwareBitmapAsync();
+                    SoftwareBitmap softwareBitmap1 = await decoder.GetSoftwareBitmapAsync();
+                    ImageResolution.Text = softwareBitmap1.PixelWidth + " x " + softwareBitmap1.PixelHeight;
+
                     writeableInputImage = new WriteableBitmap(softwareBitmap1.PixelWidth, softwareBitmap1.PixelHeight);
                     writeableInputImage.SetSource(stream);
 
@@ -79,31 +106,14 @@ namespace ImageProcessor
                 //  inputImage.Source = writeableInputImage;
 
 
-                WriteableBitmap writableOutputImage;
                 using (IRandomAccessStream stream = await inputFile.OpenAsync(FileAccessMode.Read))
                 {
-                    SoftwareBitmap softwareBitmap1;
                     BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
-                    softwareBitmap1 = await decoder.GetSoftwareBitmapAsync();
-                    writableOutputImage = new WriteableBitmap(softwareBitmap1.PixelWidth, softwareBitmap1.PixelHeight);
-                    writableOutputImage.SetSource(stream);
+                    SoftwareBitmap softwareBitmap1 = await decoder.GetSoftwareBitmapAsync();
+                    WritableOutputImage = new WriteableBitmap(softwareBitmap1.PixelWidth, softwareBitmap1.PixelHeight);
+                    WritableOutputImage.SetSource(stream);
 
-                    writableOutputImage.SetPixel(0, 0, Color.FromArgb(255, 255, 0, 0));
-                    writableOutputImage.SetPixel(0, 1, Color.FromArgb(255, 255, 0, 0));
-                    writableOutputImage.SetPixel(0, 2, Color.FromArgb(255, 255, 0, 0));
-                    writableOutputImage.SetPixel(0, 3, Color.FromArgb(255, 255, 0, 0));
-                    writableOutputImage.SetPixel(0, 4, Color.FromArgb(255, 255, 0, 0));
-                    writableOutputImage.SetPixel(0, 5, Color.FromArgb(255, 255, 0, 0));
-                    WritableOutputImage = writableOutputImage;
-
-                    SoftwareBitmap softWriteableOutputImage = SoftwareBitmap.CreateCopyFromBuffer(writableOutputImage.PixelBuffer, BitmapPixelFormat.Bgra8, writableOutputImage.PixelWidth, writableOutputImage.PixelHeight);
-
-
-
-                    OutputImageStream = await GetRandomAccessStreamFromSoftwareBitmap(softWriteableOutputImage, BitmapEncoder.PngEncoderId);
-
-                    await LoadOutputVirtualBitmap();
-
+                    await UpdateOutputImage();
                 }
 
                 //outputImage.Source = writableOutputImage;
@@ -125,19 +135,19 @@ namespace ImageProcessor
             BitmapEncoder encoder = await BitmapEncoder.CreateAsync(encoderId, inMemoryStream);
             encoder.SetSoftwareBitmap(soft);
 
-            try
-            {
-                await encoder.FlushAsync();
-            }
-            catch (Exception ex)
-            {
-
-            }
-
+            await encoder.FlushAsync();
 
             return inMemoryStream;
         }
 
+        private async Task UpdateOutputImage()
+        {
+            SoftwareBitmap softWriteableOutputImage = SoftwareBitmap.CreateCopyFromBuffer(WritableOutputImage.PixelBuffer, BitmapPixelFormat.Bgra8, WritableOutputImage.PixelWidth, WritableOutputImage.PixelHeight);
+
+            OutputImageStream = await GetRandomAccessStreamFromSoftwareBitmap(softWriteableOutputImage, BitmapEncoder.PngEncoderId);
+
+            await LoadOutputVirtualBitmap();
+        }
 
         private async void SaveInputAsImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
@@ -271,40 +281,12 @@ namespace ImageProcessor
 
         private void ZoomOutButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Zoom < 0.25)
-                Zoom = 0.25;
-            else
-                Zoom -= 0.25;
-
-            ZoomFactorTextBlock.Text = Math.Ceiling(Zoom * 100) + "%";
-
-            //inputImageScroll.ChangeView(null, null, (float)zoom);
-            InputImageCanvas.Invalidate();
-            OutputImageCanvas.Invalidate();
-
-            var size = InputVirtualBitmap.Size;
-            InputImageCanvas.Width = size.Width * (Zoom + 1);
-            InputImageCanvas.Height = size.Height * (Zoom + 1);
-            OutputImageCanvas.Width = size.Width * (Zoom + 1);
-            OutputImageCanvas.Height = size.Height * (Zoom + 1);
+            Zoom -= 0.25;
         }
 
         private void ZoomInButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Zoom > 10)
-                Zoom = 10;
-            else
-                Zoom += 0.25;
-
-            ZoomFactorTextBlock.Text = Math.Ceiling(Zoom * 100) + "%";
-            InputImageCanvas.Invalidate();
-            OutputImageCanvas.Invalidate();
-
-            var size = InputVirtualBitmap.Size;
-            InputImageCanvas.Width = size.Width * (Zoom + 1);
-            InputImageCanvas.Height = size.Height * (Zoom + 1);
-            OutputImageCanvas.Width = size.Width * (Zoom + 1);
-            OutputImageCanvas.Height = size.Height * (Zoom + 1);
+            Zoom += 0.25;
         }
 
         private void ZoomPresetMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -313,42 +295,25 @@ namespace ImageProcessor
 
             if (Int32.TryParse(menuFlyoutItem.Tag.ToString(), out int x))
             {
-                Zoom = x / 100;
-
-                ZoomFactorTextBlock.Text = menuFlyoutItem.Tag + "%";
-
-                // inputImageScroll.ChangeView(null, null, zoom);
-                InputImageCanvas.Invalidate();
-                OutputImageCanvas.Invalidate();
-
-                var size = InputVirtualBitmap.Size;
-                InputImageCanvas.Width = size.Width * (Zoom + 1);
-                InputImageCanvas.Height = size.Height * (Zoom + 1);
-                OutputImageCanvas.Width = size.Width * (Zoom + 1);
-                OutputImageCanvas.Height = size.Height * (Zoom + 1);
+                Zoom = x;
             }
         }
 
         private void SplitButton_Click(SplitButton sender, SplitButtonClickEventArgs args)
         {
             Zoom = 1;
-
-            ZoomFactorTextBlock.Text = "100%";
-            //inputImageScroll.ChangeView(null, null, 1);
-            InputImageCanvas.Invalidate();
-            OutputImageCanvas.Invalidate();
-
-            var size = InputVirtualBitmap.Size;
-            InputImageCanvas.Width = size.Width * (Zoom + 1);
-            InputImageCanvas.Height = size.Height * (Zoom + 1);
-            OutputImageCanvas.Width = size.Width * (Zoom + 1);
-            OutputImageCanvas.Height = size.Height * (Zoom + 1);
         }
+
 
         private async void GetSetPixelMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            //GetSetPixelColorDialog dialog = new GetSetPixelColorDialog(InputSoftwareBitmap, OutputImagePixelDataProvider, DecoderOutputImage);
-            //await dialog.ShowAsync();
+            GetSetPixelColorDialog dialog = new GetSetPixelColorDialog(WritableOutputImage);
+            await dialog.ShowAsync();
+
+            if (dialog.ExitResult == GetSetPixelColorDialogExitResult.BitmapChanged)
+            {
+                await UpdateOutputImage();
+            }
         }
 
         private async void AboutMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -372,11 +337,13 @@ namespace ImageProcessor
         private void InputCanvasScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             InputImageCanvas.Invalidate();
+            OutputCanvasScrollViewer.ChangeView(InputCanvasScrollViewer.HorizontalOffset, InputCanvasScrollViewer.VerticalOffset, null);
         }
 
         private void InputCanvasScrollViewer_ViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
         {
             InputImageCanvas.Invalidate();
+            OutputCanvasScrollViewer.ChangeView(InputCanvasScrollViewer.HorizontalOffset, InputCanvasScrollViewer.VerticalOffset, null);
         }
 
         private void OutputCanvasScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
