@@ -88,7 +88,7 @@ namespace ImageProcessor
                 ToolsMenuBarItem.IsEnabled = true;
                 ZoomCommandBar.IsEnabled = true;
 
-
+                ImageFileTextBox.Text = inputFile.Path;
 
                 if (InputImageStream != null)
                 {
