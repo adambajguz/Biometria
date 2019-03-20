@@ -54,23 +54,6 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="8,8,8,16" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="2*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <TextBlock Grid.Column="0" Text="Image path:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                <TextBox x:Name="ImageFileTextBox" Grid.Column="1" IsReadOnly="True"/>
-                <TextBlock Text="Image resolution:" Grid.Column="2" VerticalAlignment="Center" Margin="16,0,8,0" />
-                <TextBlock x:Name="ImageResolution" Grid.Column="3" VerticalAlignment="Center" Text="n/a"/>
-            </Grid>
-
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Original image:" VerticalAlignment="Center" Margin="8,0,8,0"/>
 
             <!--<ScrollViewer x:Name="inputImageScroll" Grid.Row="2" Grid.Column="0" 
@@ -121,8 +104,26 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="8,4,8,0" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="Image path:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox x:Name="ImageFileTextBox" Grid.Column="1" IsReadOnly="True"/>
+                    <TextBlock Text="Image resolution:" Grid.Column="2" VerticalAlignment="Center" Margin="16,0,8,0" />
+                    <TextBlock x:Name="ImageResolution" Grid.Column="3" VerticalAlignment="Center" Text="n/a"/>
+                </Grid>
+
 
                 <CommandBar Grid.Column="1" DefaultLabelPosition="Right" x:Name="ZoomCommandBar">
                     <!-- Zoom controls -->
