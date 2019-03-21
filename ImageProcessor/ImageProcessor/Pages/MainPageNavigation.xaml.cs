@@ -59,7 +59,7 @@ namespace ImageProcessor.Pages
         private void ContentFrameShow()
         {
             ContentFrame.Visibility = Visibility.Visible;
-            ContentFrameRow.Height = new GridLength(2, GridUnitType.Star);
+            ContentFrameRow.Height = new GridLength(5, GridUnitType.Star);
             ContentFrameMinimize.IsChecked = true;
         }
 

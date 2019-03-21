@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
-    mc:Ignorable="d"
+    mc:Ignorable="d" HorizontalAlignment="Center"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <!-- Content body -->
@@ -56,8 +56,8 @@
             </ToolTipService.ToolTip>
         </Rectangle>
 
-        <Button x:Name="ApplyColorButton" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" 
-                Margin="0,4,0,0" HorizontalAlignment="Stretch" Click="ApplyColorButton_Click">
+        <Button x:Name="ApplyColorButton" Grid.Row="6" Grid.Column="3" Grid.ColumnSpan="2" 
+                Margin="8,4,0,0" HorizontalAlignment="Stretch" Click="ApplyColorButton_Click">
             <StackPanel>
                 <SymbolIcon Symbol="Accept" />
                 <TextBlock>Apply color</TextBlock>
@@ -66,12 +66,12 @@
 
         <ColorPicker x:Name="PixelColorPicker" Grid.Row="0" Grid.Column="2" Grid.RowSpan="9"
                      Margin="12,0,0,0" ColorSpectrumShape="Box" ElementSoundMode="Off" IsAlphaEnabled="True"
-                     IsColorPreviewVisible="False" ColorChanged="ColorPicker_ColorChanged" IsAlphaSliderVisible="False"
+                     IsColorPreviewVisible="False" ColorChanged="ColorPicker_ColorChanged" IsAlphaSliderVisible="False" IsColorSliderVisible="False"
                      IsAlphaTextInputVisible="False" IsColorChannelTextInputVisible="False" IsHexInputVisible="False"/>
         
-        <ColorPicker x:Name="PixelColorPicker2" Grid.Row="0" Grid.Column="3" Grid.RowSpan="9"
+        <ColorPicker x:Name="PixelColorPicker2" Grid.Row="0" Grid.Column="3" Grid.RowSpan="6"
                      Margin="12,0,0,0" IsColorSpectrumVisible="False" ElementSoundMode="Off" IsAlphaEnabled="True"
-                     IsColorPreviewVisible="False" ColorChanged="ColorPicker_ColorChanged" IsAlphaSliderVisible="False"
+                     IsColorPreviewVisible="False" ColorChanged="ColorPicker2_ColorChanged" IsAlphaSliderVisible="False"
                      IsAlphaTextInputVisible="False"/>
     </Grid>
 </Page>

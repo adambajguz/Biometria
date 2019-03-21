@@ -41,6 +41,13 @@ namespace ImageProcessor.Pages
         {
             NewColorPreview.Fill = new SolidColorBrush(sender.Color);
             NewColorPreviewTooltip.Content = sender.Color.ToString();
+
+            PixelColorPicker2.Color = PixelColorPicker.Color;
+        }
+
+        private void ColorPicker2_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        {
+           PixelColorPicker.Color = PixelColorPicker2.Color;
         }
 
         private async void ApplyColorButton_Click(object sender, RoutedEventArgs e)
