@@ -78,7 +78,8 @@ namespace ImageProcessor.Pages
 
         public void ContentFrame_Reset()
         {
-            ContentFrame.Content = null;
+            if (ContentFrame.CanGoBack)
+                ContentFrame.GoBack();
             ContentFramePageName.Text = "";
 
             ContentFrameMinimize.IsEnabled = false;
