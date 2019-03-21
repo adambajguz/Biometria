@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using ImageProcessor.Dialogs;
+using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 
 
-namespace ImageProcessor
+namespace ImageProcessor.Pages
 {
     public sealed partial class MainPage : Page
     {
@@ -52,9 +53,12 @@ namespace ImageProcessor
             this.InitializeComponent();
 
             SaveMenuFlyoutItem.IsEnabled = false;
-            EditMenuBarItem.IsEnabled = false;
+            DialogToolsMenuBarItem.IsEnabled = false;
             ToolsMenuBarItem.IsEnabled = false;
             ZoomCommandBar.IsEnabled = false;
+
+            ContentFrame_Reset();
+            ContentFrameCollapse();
         }
 
         IRandomAccessStream InputImageStream;
@@ -84,7 +88,7 @@ namespace ImageProcessor
             if (inputFile != null)
             {
                 SaveMenuFlyoutItem.IsEnabled = true;
-                EditMenuBarItem.IsEnabled = true;
+                DialogToolsMenuBarItem.IsEnabled = true;
                 ToolsMenuBarItem.IsEnabled = true;
                 ZoomCommandBar.IsEnabled = true;
 
@@ -149,7 +153,7 @@ namespace ImageProcessor
             return inMemoryStream;
         }
 
-        private async Task UpdateOutputImage()
+        public async Task UpdateOutputImage()
         {
             SoftwareBitmap softWriteableOutputImage = SoftwareBitmap.CreateCopyFromBuffer(WritableOutputImage.PixelBuffer, BitmapPixelFormat.Bgra8, WritableOutputImage.PixelWidth, WritableOutputImage.PixelHeight);
 
@@ -158,10 +162,6 @@ namespace ImageProcessor
             await LoadOutputVirtualBitmap();
         }
 
-        private async void SaveInputAsImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
 
         private async void SaveOutputAsImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
@@ -314,7 +314,7 @@ namespace ImageProcessor
         }
 
 
-        private async void OpenPixelManagerMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void OpenPixelManagerDialogMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             PixelManagerDialog dialog = new PixelManagerDialog(WritableOutputImage);
             await dialog.ShowAsync();
@@ -323,6 +323,16 @@ namespace ImageProcessor
             {
                 await UpdateOutputImage();
             }
+        }
+
+        private void OpenPixelManagerPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            NavView_Navigate(PixelManagerTag, WritableOutputImage);
+        }
+
+        private void OpenHistogramsPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            NavView_Navigate(PixelManagerTag, WritableOutputImage);
         }
 
         private async void AboutMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -336,12 +346,6 @@ namespace ImageProcessor
 
             await aboutDialog.ShowAsync();
         }
-
-        private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
 
         private void InputCanvasScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
@@ -428,6 +432,9 @@ namespace ImageProcessor
 
         private async Task LoadInputVirtualBitmap()
         {
+            ContentFrame_Reset();
+            ContentFrameCollapse();
+
             if (InputVirtualBitmap != null)
             {
                 InputVirtualBitmap.Dispose();

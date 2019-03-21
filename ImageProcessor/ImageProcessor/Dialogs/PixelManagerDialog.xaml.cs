@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 // The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace ImageProcessor
+namespace ImageProcessor.Dialogs
 {
     public enum PixelManagerDialogExitResult
     {
