@@ -81,8 +81,14 @@ namespace ImageProcessor.Pages
 
                     OriginalColorPreview.Fill = new SolidColorBrush(pixelColor);
                     NewColorPreview.Fill = new SolidColorBrush(pixelColor);
+
+                    ApplyColorButton.IsEnabled = true;
+
+                    return;
                 }
             }
+
+            ApplyColorButton.IsEnabled = false;
         }
 
         private void TextBox_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
