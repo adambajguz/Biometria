@@ -119,6 +119,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data\ImageHistogramData.cs" />
+    <Compile Include="Pages\HistogramManipulationPage.xaml.cs">
+      <DependentUpon>HistogramManipulationPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\MainPageNavigation.xaml.cs" />
     <Compile Include="Dialogs\PixelManagerDialog.xaml.cs">
       <DependentUpon>PixelManagerDialog.xaml</DependentUpon>
@@ -195,6 +199,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\HistogramManipulationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -205,6 +213,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="LiveCharts">
+      <Version>0.8.1.1</Version>
+    </PackageReference>
     <PackageReference Include="LiveCharts.Uwp">
       <Version>0.8.0</Version>
     </PackageReference>

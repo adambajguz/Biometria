@@ -1,8 +1,8 @@
-﻿using ImageProcessor.Dialogs;
-using Microsoft.Graphics.Canvas;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ImageProcessor.Dialogs;
+using Microsoft.Graphics.Canvas;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
@@ -23,10 +23,7 @@ namespace ImageProcessor.Pages
 
         public double Zoom
         {
-            get
-            {
-                return zoom;
-            }
+            get => zoom;
             set
             {
                 if (value <= 10 && value >= 0.25)
@@ -61,12 +58,11 @@ namespace ImageProcessor.Pages
             ContentFrameCollapse();
         }
 
-        IRandomAccessStream InputImageStream;
-        CanvasVirtualBitmap InputVirtualBitmap;
-
-        IRandomAccessStream OutputImageStream;
-        CanvasVirtualBitmap OutputVirtualBitmap;
-        WriteableBitmap WritableOutputImage;
+        private IRandomAccessStream InputImageStream;
+        private CanvasVirtualBitmap InputVirtualBitmap;
+        private IRandomAccessStream OutputImageStream;
+        private CanvasVirtualBitmap OutputVirtualBitmap;
+        private WriteableBitmap WritableOutputImage;
 
         private async void OpenImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
@@ -288,15 +284,9 @@ namespace ImageProcessor.Pages
             return null;
         }
 
-        private void ZoomOutButton_Click(object sender, RoutedEventArgs e)
-        {
-            Zoom -= 0.25;
-        }
+        private void ZoomOutButton_Click(object sender, RoutedEventArgs e) => Zoom -= 0.25;
 
-        private void ZoomInButton_Click(object sender, RoutedEventArgs e)
-        {
-            Zoom += 0.25;
-        }
+        private void ZoomInButton_Click(object sender, RoutedEventArgs e) => Zoom += 0.25;
 
         private void ZoomPresetMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
@@ -308,10 +298,7 @@ namespace ImageProcessor.Pages
             }
         }
 
-        private void SplitButton_Click(SplitButton sender, SplitButtonClickEventArgs args)
-        {
-            Zoom = 1;
-        }
+        private void SplitButton_Click(SplitButton sender, SplitButtonClickEventArgs args) => Zoom = 1;
 
 
         private async void OpenPixelManagerDialogMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -325,15 +312,9 @@ namespace ImageProcessor.Pages
             }
         }
 
-        private void OpenPixelManagerPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            NavView_Navigate(PixelManagerTag, WritableOutputImage);
-        }
+        private void OpenPixelManagerPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e) => NavView_Navigate(PixelManagerTag, WritableOutputImage);
 
-        private void OpenHistogramsPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            NavView_Navigate(PixelManagerTag, WritableOutputImage);
-        }
+        private void OpenHistogramsPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e) => NavView_Navigate(HistogramManipulationTag, WritableOutputImage);
 
         private async void AboutMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
@@ -359,15 +340,9 @@ namespace ImageProcessor.Pages
             OutputCanvasScrollViewer.ChangeView(InputCanvasScrollViewer.HorizontalOffset, InputCanvasScrollViewer.VerticalOffset, null);
         }
 
-        private void OutputCanvasScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
-        {
-            OutputImageCanvas.Invalidate();
-        }
+        private void OutputCanvasScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e) => OutputImageCanvas.Invalidate();
 
-        private void OutputCanvasScrollViewer_ViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
-        {
-            OutputImageCanvas.Invalidate();
-        }
+        private void OutputCanvasScrollViewer_ViewChanging(object sender, ScrollViewerViewChangingEventArgs e) => OutputImageCanvas.Invalidate();
 
         private void InputImageCanvas_CreateResources(Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
         {
@@ -485,9 +460,6 @@ namespace ImageProcessor.Pages
             //LoadedImageInfo = string.Format("{0}x{1} image, is {2}CachedOnDemand", size.Width, size.Height, virtualBitmap.IsCachedOnDemand ? "" : "not ");
         }
 
-        private void ExitMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            CoreApplication.Exit();
-        }
+        private void ExitMenuFlyoutItem_Click(object sender, RoutedEventArgs e) => CoreApplication.Exit();
     }
 }

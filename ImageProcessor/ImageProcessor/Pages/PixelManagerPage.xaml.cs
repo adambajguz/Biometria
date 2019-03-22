@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using ImageProcessor.Dialogs;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -31,10 +30,7 @@ namespace ImageProcessor.Pages
             parentMainPage = (MainPage)frame.Content;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            this.editingBitmap = e.Parameter as WriteableBitmap;
-        }
+        protected override void OnNavigatedTo(NavigationEventArgs e) => this.editingBitmap = e.Parameter as WriteableBitmap;
 
 
         private void ColorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
@@ -45,10 +41,7 @@ namespace ImageProcessor.Pages
             PixelColorPicker2.Color = PixelColorPicker.Color;
         }
 
-        private void ColorPicker2_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
-        {
-           PixelColorPicker.Color = PixelColorPicker2.Color;
-        }
+        private void ColorPicker2_ColorChanged(ColorPicker sender, ColorChangedEventArgs args) => PixelColorPicker.Color = PixelColorPicker2.Color;
 
         private async void ApplyColorButton_Click(object sender, RoutedEventArgs e)
         {
@@ -91,9 +84,6 @@ namespace ImageProcessor.Pages
             ApplyColorButton.IsEnabled = false;
         }
 
-        private void TextBox_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
-        {
-            sender.Text = new String(sender.Text.Where(char.IsDigit).ToArray());
-        }
+        private void TextBox_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args) => sender.Text = new String(sender.Text.Where(char.IsDigit).ToArray());
     }
 }

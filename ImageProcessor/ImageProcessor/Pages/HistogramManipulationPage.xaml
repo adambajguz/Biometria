@@ -1,0 +1,78 @@
+﻿<Page
+    x:Class="ImageProcessor.Pages.HistogramManipulationPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LC2"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:lvc="using:LiveCharts.Uwp"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <lvc:CartesianChart x:Name="RPlot" Grid.Row="0" />
+        <lvc:CartesianChart x:Name="GPlot" Grid.Row="1" />
+        <lvc:CartesianChart x:Name="BPlot" Grid.Row="2" />
+        <lvc:CartesianChart x:Name="CPlot" Grid.Row="3" />
+
+        <Hub Header="Operations" 
+             Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" ScrollViewer.HorizontalScrollBarVisibility="Visible">
+            <HubSection x:Name="Lighten" Header="Lighten" MinWidth="300">
+                <DataTemplate>
+                    <Grid>
+                        <TextBlock Text="The most recent news will be here." 
+                   Style="{ThemeResource BodyTextBlockStyle}"/>
+                    </Grid>
+                </DataTemplate>
+            </HubSection>
+
+            <!--IsHeaderInteractive="True"-->
+            <HubSection x:Name="Darken" Header="Tech"
+        Background="#F4F4F4" MinWidth="300">
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="Tech news goes here."
+                   Style="{ThemeResource BodyTextBlockStyle}"/>
+                        <TextBlock Text="Click the header to go to the Tech page."
+                   Style="{ThemeResource BodyTextBlockStyle}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </HubSection>
+
+            <HubSection x:Name="HistogramStretching" Header="Histogram stretching"
+        Background="#F9F9F9" MinWidth="300">
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="Sports news goes here."
+                   Style="{ThemeResource BodyTextBlockStyle}"/>
+                        <TextBlock Text="Click the header to go to the Sports page." 
+                   Style="{ThemeResource BodyTextBlockStyle}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </HubSection>
+
+            <HubSection x:Name="HistogramEqualization" Header="Histogram equalization"
+        Background="#F4F4F4" MinWidth="300">
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="Tech news goes here."
+                   Style="{ThemeResource BodyTextBlockStyle}"/>
+                        <TextBlock Text="Click the header to go to the Tech page."
+                   Style="{ThemeResource BodyTextBlockStyle}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </HubSection>
+        </Hub>
+    </Grid>
+</Page>
