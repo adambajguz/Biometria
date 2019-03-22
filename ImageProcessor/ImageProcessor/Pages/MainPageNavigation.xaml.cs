@@ -38,9 +38,10 @@ namespace ImageProcessor.Pages
             // Get the page type before navigation so you can prevent duplicate
             // entries in the backstack.
             var preNavPageType = ContentFrame.CurrentSourcePageType;
+            var preNavPageType2 = ContentFrame.SourcePageType;
 
             // Only navigate if the selected page isn't currently loaded.
-            if (!(_page is null) && !Type.Equals(preNavPageType, _page))
+            if (!(_page is null) && !Type.Equals(preNavPageType, _page) && !Type.Equals(preNavPageType, _page))
             {
                 ContentFrame.Navigate(_page, parameter);
             }
@@ -75,17 +76,19 @@ namespace ImageProcessor.Pages
         private void ContentFrameClose_Click(object sender, RoutedEventArgs e)
         {
             ContentFrame_Reset();
-            ContentFrameCollapse();
         }
 
         public void ContentFrame_Reset()
         {
             if (ContentFrame.CanGoBack)
                 ContentFrame.GoBack();
+            ContentFrame.Content = null;
+
             ContentFramePageName.Text = "";
 
             ContentFrameMinimize.IsEnabled = false;
             ContentFrameClose.IsEnabled = false;
+            ContentFrameCollapse();
         }
     }
 }

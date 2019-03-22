@@ -21,6 +21,8 @@ namespace ImageProcessor.Pages
     {
         private double zoom = 1;
 
+        private object ContentFrameContent;
+
         public double Zoom
         {
             get => zoom;
@@ -42,6 +44,8 @@ namespace ImageProcessor.Pages
                 InputImageCanvas.Height = size.Height * (zoom + 1);
                 OutputImageCanvas.Width = size.Width * (zoom + 1);
                 OutputImageCanvas.Height = size.Height * (zoom + 1);
+
+                ContentFrameContent = ContentFrame.Content;
             }
         }
 
@@ -87,6 +91,8 @@ namespace ImageProcessor.Pages
                 DialogToolsMenuBarItem.IsEnabled = true;
                 ToolsMenuBarItem.IsEnabled = true;
                 ZoomCommandBar.IsEnabled = true;
+
+                ContentFrame_Reset();
 
                 ImageFileTextBox.Text = inputFile.Path;
 
