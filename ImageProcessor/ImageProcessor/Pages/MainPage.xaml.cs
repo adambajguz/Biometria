@@ -62,7 +62,7 @@ namespace ImageProcessor.Pages
         private CanvasVirtualBitmap InputVirtualBitmap;
         private IRandomAccessStream OutputImageStream;
         private CanvasVirtualBitmap OutputVirtualBitmap;
-        private WriteableBitmap WritableOutputImage;
+        public WriteableBitmap WritableOutputImage;
 
         private async void OpenImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {

@@ -18,7 +18,6 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <lvc:CartesianChart x:Name="RPlot" Grid.Row="0" />
@@ -26,53 +25,22 @@
         <lvc:CartesianChart x:Name="BPlot" Grid.Row="2" />
         <lvc:CartesianChart x:Name="CPlot" Grid.Row="3" />
 
-        <Hub Header="Operations" 
-             Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" ScrollViewer.HorizontalScrollBarVisibility="Visible">
-            <HubSection x:Name="Lighten" Header="Lighten" MinWidth="300">
-                <DataTemplate>
-                    <Grid>
-                        <TextBlock Text="The most recent news will be here." 
-                   Style="{ThemeResource BodyTextBlockStyle}"/>
-                    </Grid>
-                </DataTemplate>
-            </HubSection>
-
-            <!--IsHeaderInteractive="True"-->
-            <HubSection x:Name="Darken" Header="Tech"
-        Background="#F4F4F4" MinWidth="300">
-                <DataTemplate>
-                    <StackPanel>
-                        <TextBlock Text="Tech news goes here."
-                   Style="{ThemeResource BodyTextBlockStyle}"/>
-                        <TextBlock Text="Click the header to go to the Tech page."
-                   Style="{ThemeResource BodyTextBlockStyle}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </HubSection>
-
-            <HubSection x:Name="HistogramStretching" Header="Histogram stretching"
-        Background="#F9F9F9" MinWidth="300">
-                <DataTemplate>
-                    <StackPanel>
-                        <TextBlock Text="Sports news goes here."
-                   Style="{ThemeResource BodyTextBlockStyle}"/>
-                        <TextBlock Text="Click the header to go to the Sports page." 
-                   Style="{ThemeResource BodyTextBlockStyle}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </HubSection>
-
-            <HubSection x:Name="HistogramEqualization" Header="Histogram equalization"
-        Background="#F4F4F4" MinWidth="300">
-                <DataTemplate>
-                    <StackPanel>
-                        <TextBlock Text="Tech news goes here."
-                   Style="{ThemeResource BodyTextBlockStyle}"/>
-                        <TextBlock Text="Click the header to go to the Tech page."
-                   Style="{ThemeResource BodyTextBlockStyle}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </HubSection>
-        </Hub>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="LightenButton" Grid.Row="0" Grid.Column="0" Content="Lighten" Click="LightenButton_Click"/>
+                <Button x:Name="DarkenButton" Grid.Row="1" Grid.Column="0" Content="Darken" Click="DarkenButton_Click"/>
+                <Button x:Name="StretchHistogramButton" Grid.Row="2" Grid.Column="0" Content="Histogram stretching" Click="StretchHistogramButton_Click"/>
+                <Button x:Name="EqualizeHistogramButton" Grid.Row="3" Grid.Column="0" Content="Histogram equalization" Click="EqualizeHistogramButton_Click"/>
+            </Grid>
     </Grid>
 </Page>
