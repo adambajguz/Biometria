@@ -18,6 +18,7 @@ using Windows.Storage.Streams;
 using LiveCharts;
 using LiveCharts.Wpf;
 using Accord.Imaging.Filters;
+using Accord.Imaging;
 
 namespace Biometria
 {
@@ -355,6 +356,9 @@ namespace Biometria
 
             DrawAverageHistogram(histogramR, histogramG, histogramB);
             AfterImage.Source = BeforeImage.Source;
+            AfterImage.Source = BeforeImage.Source;
+            AfterImg = AfterImg = (BitmapSource)AfterImage.Source;
+            wb = new WriteableBitmap((BitmapSource)BeforeImage.Source);
         }
 
         int[] rHistogram;
@@ -420,12 +424,12 @@ namespace Biometria
                     var nValueG = (byte)histG[intensityG];
                     var nValueB = (byte)histB[intensityB];
 
-                    if (histR[intensityR] < 255)
-                        nValueR = 255;
-                    if (histG[intensityG] < 255)
-                        nValueG = 255;
-                    if (histB[intensityB] < 255)
-                        nValueB = 255;
+                    //]]if (histR[intensityR] < 255)
+                      //  nValueR = 255;
+                    //if (histG[intensityG] < 255)
+                      //  nValueG = 255;
+                    //if (histB[intensityB] < 255)
+                      //  nValueB = 255;
 
                     bytes[2] = nValueR;
                     bytes[1] = nValueG;
@@ -448,6 +452,7 @@ namespace Biometria
             DrawHistogram(histB, "B");
 
             DrawAverageHistogram(histR, histG, histB);
+          
         }
     }
 }
