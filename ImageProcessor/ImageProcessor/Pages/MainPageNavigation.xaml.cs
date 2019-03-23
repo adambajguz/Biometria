@@ -23,6 +23,7 @@ namespace ImageProcessor.Pages
             (HistogramManipulationTag, typeof(HistogramManipulationPage)),
         };
 
+        private bool navigated = false;
 
         public void NavView_Navigate(string navItemTag, object parameter)
         {
@@ -41,8 +42,9 @@ namespace ImageProcessor.Pages
             var preNavPageType2 = ContentFrame.SourcePageType;
 
             // Only navigate if the selected page isn't currently loaded.
-            if (!(_page is null) && !Type.Equals(preNavPageType, _page) && !Type.Equals(preNavPageType, _page))
+            if (!(_page is null) && !navigated)// && !Type.Equals(preNavPageType, _page) && !Type.Equals(preNavPageType, _page))
             {
+                navigated = true;
                 ContentFrame.Navigate(_page, parameter);
             }
 
@@ -84,6 +86,7 @@ namespace ImageProcessor.Pages
                 ContentFrame.GoBack();
             ContentFrame.Content = null;
 
+            navigated = false;
             ContentFramePageName.Text = "";
 
             ContentFrameMinimize.IsEnabled = false;
