@@ -99,6 +99,35 @@ namespace ImageProcessor.Pages
 
         private async void LightenButton_Click(object sender, RoutedEventArgs e)
         {
+            double cR=(double)0, cG= (double)0, cB= (double)0;
+
+            for (var i = 0; i < 256; i++)
+            {
+                if (bitmapHistogramData.R[i] > 0)
+                    cR = i;
+
+                if (bitmapHistogramData.G[i] > 0)
+                    cG = i;
+
+                if (bitmapHistogramData.B[i] > 0)
+                    cB = i;
+            }
+
+            cR = 255 / (Math.Log(1 + cR));
+            cG = 255 / (Math.Log(1 + cG));
+            cB = 255 / (Math.Log(1 + cB));
+
+            editingBitmap.ForEach((x, y, color) =>
+            {
+                return Color.FromArgb(color.A,
+                                     (byte)(Math.Log(1 + color.R) * cR),
+                                     (byte)(Math.Log(1 + color.G) * cG),
+                                     (byte)(Math.Log(1 + color.B) * cB));
+            });
+
+
+
+
             UpdateHistograms();
             parentMainPage.WritableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
@@ -107,6 +136,35 @@ namespace ImageProcessor.Pages
 
         private async void DarkenButton_Click(object sender, RoutedEventArgs e)
         {
+            double cR = (double)0, cG = (double)0, cB = (double)0;
+
+            for (var i = 0; i < 256; i++)
+            {
+                if (bitmapHistogramData.R[i] > 0)
+                    cR = i;
+
+                if (bitmapHistogramData.G[i] > 0)
+                    cG = i;
+
+                if (bitmapHistogramData.B[i] > 0)
+                    cB = i;
+            }
+
+            cR = 255 / (Math.Log(1 + cR));
+            cG = 255 / (Math.Log(1 + cG));
+            cB = 255 / (Math.Log(1 + cB));
+
+
+
+            int r = 2;
+            editingBitmap.ForEach((x, y, color) =>
+            {
+                return Color.FromArgb(color.A,
+                                     (byte)(Math.Pow(color.R, r) * cR),
+                                     (byte)(Math.Pow(color.G, r) * cG),
+                                     (byte)(Math.Pow(color.B, r) * cB));
+            });
+
             UpdateHistograms();
             parentMainPage.WritableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
@@ -159,24 +217,6 @@ namespace ImageProcessor.Pages
                     await parentMainPage.UpdateOutputImage();
                 }
             }
-        }
-
-        private double[] UpdateLUT2(double[] D)
-        {
-            double[] LUT = new double[256];
-
-
-
-            int i;
-            double D0min;
-            //znajdz pierwszą niezerową wartosc dystrybuanty
-            i = 0;
-            while (D[i] == 0) i++;
-            D0min = D[i];
-
-            for (i = 0; i < 256; i++)
-                LUT[i] = (((D[i] - D0min) / (1 - D0min)) * (256 - 1));
-            return LUT;
         }
 
         private async void EqualizeHistogramButton_Click(object sender, RoutedEventArgs e)
