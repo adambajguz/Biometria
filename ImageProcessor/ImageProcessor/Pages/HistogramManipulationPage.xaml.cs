@@ -95,6 +95,43 @@ namespace ImageProcessor.Pages
             CPlot.Series = SeriesCollectionC;
         }
 
+        private async void IntensityButton_Click(object sender, RoutedEventArgs e)
+        {
+            byte[] LUT = new byte[256];
+
+
+            if (Int32.TryParse(IntensityR.Text, out int b))
+            {
+                for (int i = 0; i < 256; ++i)
+                {
+                    if ((b + i) > 255)
+                    {
+                        LUT[i] = 255;
+                    }
+                    else if ((b + i) < 0)
+                    {
+                        LUT[i] = 0;
+                    }
+                    else
+                    {
+                        LUT[i] = (byte)(b + i);
+                    }
+                }
+                
+                editingBitmap.ForEach((x, y, color) =>
+                {
+                    return Color.FromArgb(color.A,
+                                         LUT[color.R],
+                                         LUT[color.G],
+                                         LUT[color.B]);
+                });
+
+                UpdateHistograms();
+                parentMainPage.WritableOutputImage = editingBitmap;
+                await parentMainPage.UpdateOutputImage();
+            }
+        }
+
         private async void LightenButton_Click(object sender, RoutedEventArgs e)
         {
             double cR = (double)0, cG = (double)0, cB = (double)0;
@@ -268,6 +305,8 @@ namespace ImageProcessor.Pages
             parentMainPage.WritableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
         }
+
+
     }
 
 }
