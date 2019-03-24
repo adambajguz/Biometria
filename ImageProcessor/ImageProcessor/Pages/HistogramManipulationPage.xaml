@@ -25,22 +25,26 @@
         <lvc:CartesianChart x:Name="BPlot" Grid.Row="2" />
         <lvc:CartesianChart x:Name="CPlot" Grid.Row="3" />
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Button x:Name="LightenButton" Grid.Row="0" Grid.Column="0" Content="Lighten" Click="LightenButton_Click"/>
-                <Button x:Name="DarkenButton" Grid.Row="1" Grid.Column="0" Content="Darken" Click="DarkenButton_Click"/>
-                <Button x:Name="StretchHistogramButton" Grid.Row="2" Grid.Column="0" Content="Histogram stretching" Click="StretchHistogramButton_Click"/>
-                <Button x:Name="EqualizeHistogramButton" Grid.Row="3" Grid.Column="0" Content="Histogram equalization" Click="EqualizeHistogramButton_Click"/>
-            </Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="LightenButton" Grid.Row="0" Grid.Column="0" Content="Lighten" Click="LightenButton_Click"/>
+            <Button x:Name="DarkenButton" Grid.Row="1" Grid.Column="0" Content="Darken" Click="DarkenButton_Click"/>
+            <Button x:Name="StretchHistogramButton" Grid.Row="2" Grid.Column="0" Content="Histogram stretching" Click="StretchHistogramButton_Click"/>
+            <TextBox x:Name="StretchA" Grid.Row="2" Grid.Column="1"/>
+            <TextBox x:Name="StretchB" Grid.Row="2" Grid.Column="2"/>
+            <Button x:Name="EqualizeHistogramButton" Grid.Row="3" Grid.Column="0" Content="Histogram equalization" Click="EqualizeHistogramButton_Click"/>
+        </Grid>
     </Grid>
 </Page>
