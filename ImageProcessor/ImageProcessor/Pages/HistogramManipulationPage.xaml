@@ -40,10 +40,14 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Button x:Name="LightenButton" Grid.Row="0" Grid.Column="0" Content="Lighten" Click="LightenButton_Click"/>
+
             <Button x:Name="DarkenButton" Grid.Row="1" Grid.Column="0" Content="Darken" Click="DarkenButton_Click"/>
+            <TextBox x:Name="DarkenR" Grid.Row="1" Grid.Column="1"/>
+
             <Button x:Name="StretchHistogramButton" Grid.Row="2" Grid.Column="0" Content="Histogram stretching" Click="StretchHistogramButton_Click"/>
             <TextBox x:Name="StretchA" Grid.Row="2" Grid.Column="1"/>
             <TextBox x:Name="StretchB" Grid.Row="2" Grid.Column="2"/>
+            
             <Button x:Name="EqualizeHistogramButton" Grid.Row="3" Grid.Column="0" Content="Histogram equalization" Click="EqualizeHistogramButton_Click"/>
         </Grid>
     </Grid>

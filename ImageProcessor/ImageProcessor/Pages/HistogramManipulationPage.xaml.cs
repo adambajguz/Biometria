@@ -95,11 +95,9 @@ namespace ImageProcessor.Pages
             CPlot.Series = SeriesCollectionC;
         }
 
-        private double CalcC(int Max) => 255 / Math.Log(1 + Max);
-
         private async void LightenButton_Click(object sender, RoutedEventArgs e)
         {
-            double cR=(double)0, cG= (double)0, cB= (double)0;
+            double cR = (double)0, cG = (double)0, cB = (double)0;
 
             for (var i = 0; i < 256; i++)
             {
@@ -156,18 +154,25 @@ namespace ImageProcessor.Pages
 
 
 
-            int r = 2;
-            editingBitmap.ForEach((x, y, color) =>
+            if (Double.TryParse(DarkenR.Text, out double r))
             {
-                return Color.FromArgb(color.A,
-                                     (byte)(Math.Pow(color.R, r) * cR),
-                                     (byte)(Math.Pow(color.G, r) * cG),
-                                     (byte)(Math.Pow(color.B, r) * cB));
-            });
+                editingBitmap.ForEach((x, y, color) =>
+                {
+                    //return Color.FromArgb(color.A,
+                    //                     (byte)((Math.Pow(r, color.R) - 1) * cR),
+                    //                     (byte)((Math.Pow(r, color.G) - 1) * cG),
+                    //                     (byte)((Math.Pow(r, color.B) - 1) * cB));
 
-            UpdateHistograms();
-            parentMainPage.WritableOutputImage = editingBitmap;
-            await parentMainPage.UpdateOutputImage();
+                    return Color.FromArgb(color.A,
+                                         (byte)((Math.Pow(color.R, 2) + 1) * cR),
+                                         (byte)((Math.Pow(color.G, 2) + 1) * cG),
+                                         (byte)((Math.Pow(color.B, 2) + 1) * cB));
+                });
+
+                UpdateHistograms();
+                parentMainPage.WritableOutputImage = editingBitmap;
+                await parentMainPage.UpdateOutputImage();
+            }
         }
 
 
@@ -250,8 +255,6 @@ namespace ImageProcessor.Pages
                 histB[i] = Convert.ToInt32((cumulativeB * bHistogram.Length) / (totalPixels));
             }
 
-   
-
 
             editingBitmap.ForEach((x, y, color) =>
             {
@@ -261,68 +264,10 @@ namespace ImageProcessor.Pages
                                      (byte)histB[color.B]);
             });
 
-
-
             UpdateHistograms();
             parentMainPage.WritableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
         }
-
-
-        //private async void EqualizeHistogramButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    double[] D_R = new double[256];
-        //    double[] D_G = new double[256];
-        //    double[] D_B = new double[256];
-
-        //    int totalPixels = editingBitmap.PixelHeight * editingBitmap.PixelWidth;
-
-        //    D_R[0] += bitmapHistogramData.R[0] / totalPixels;
-        //    D_G[0] += bitmapHistogramData.G[0] / totalPixels;
-        //    D_B[0] += bitmapHistogramData.B[0] / totalPixels;
-        //    for (int i = 1; i < 256; ++i)
-        //    {
-        //        D_R[i] = (bitmapHistogramData.R[i] + bitmapHistogramData.R[i - 1]);
-        //        D_G[i] = (bitmapHistogramData.G[i] + bitmapHistogramData.G[i - 1]);
-        //        D_B[i] = (bitmapHistogramData.B[i] + bitmapHistogramData.B[i - 1]);
-
-        //        D_R[i] /= totalPixels;
-        //        D_G[i] /= totalPixels;
-        //        D_B[i] /= totalPixels;
-        //    }
-
-
-
-        //    //przelicz tablice LUT, tak by rozciagnac histogram
-        //    double[] LUT_R = UpdateLUT2(D_R);
-        //    double[] LUT_G = UpdateLUT2(D_G);
-        //    double[] LUT_B = UpdateLUT2(D_B);
-
-
-        //    //LUT_R = UpdateLUT(255.0 / (LUT_R_max - LUT_R_min), -LUT_R_min);
-        //    //LUT_G = UpdateLUT(255.0 / (LUT_G_max - LUT_G_min), -LUT_G_min);
-        //    //LUT_B = UpdateLUT(255.0 / (LUT_B_max - LUT_B_min), -LUT_B_min);
-
-
-        //    //for (int i = 0; i < LUT_R.Length; ++i)
-        //    //{
-        //    //    LUT_R[i] = (byte)(((255 * (i - LUT_R_min)) / (LUT_R_max - LUT_R_min))%256);
-        //    //    LUT_G[i] = (byte)(((255 * (i - LUT_G_min)) / (LUT_G_max - LUT_G_min))%256);
-        //    //    LUT_B[i] = (byte)(((255 * (i - LUT_B_min)) / (LUT_B_max - LUT_B_min))%256);
-        //    //}
-
-        //    editingBitmap.ForEach((x, y, color) =>
-        //    {
-        //        return Color.FromArgb(color.A,
-        //                             (byte)LUT_R[color.R],
-        //                             (byte)LUT_G[color.G],
-        //                             (byte)LUT_B[color.B]);
-        //    });
-
-        //    UpdateHistograms();
-        //    parentMainPage.WritableOutputImage = editingBitmap;
-        //    await parentMainPage.UpdateOutputImage();
-        //}
     }
 
 }
