@@ -117,7 +117,7 @@ namespace ImageProcessor.Pages
                         LUT[i] = (byte)(b + i);
                     }
                 }
-                
+
                 editingBitmap.ForEach((x, y, color) =>
                 {
                     return Color.FromArgb(color.A,
@@ -173,43 +173,42 @@ namespace ImageProcessor.Pages
         {
             double cR = (double)0, cG = (double)0, cB = (double)0;
 
-            for (var i = 0; i < 256; i++)
+            //for (var i = 0; i < 256; i++)
+            //{
+            //    if (bitmapHistogramData.R[i] > 0)
+            //        cR = i;
+
+            //    if (bitmapHistogramData.G[i] > 0)
+            //        cG = i;
+
+            //    if (bitmapHistogramData.B[i] > 0)
+            //        cB = i;
+            //}
+
+            //cR = 255 / (Math.Log(1 + cR));
+            //cG = 255 / (Math.Log(1 + cG));
+            //cB = 255 / (Math.Log(1 + cB));
+
+            cR = cG = cB = 20;
+
+            double r = 1.01;
+            editingBitmap.ForEach((x, y, color) =>
             {
-                if (bitmapHistogramData.R[i] > 0)
-                    cR = i;
+                return Color.FromArgb(color.A,
+                                     (byte)((Math.Pow(r, color.R) - 1) * cR),
+                                     (byte)((Math.Pow(r, color.G) - 1) * cG),
+                                     (byte)((Math.Pow(r, color.B) - 1) * cB));
 
-                if (bitmapHistogramData.G[i] > 0)
-                    cG = i;
+                //return Color.FromArgb(color.A,
+                //                     (byte)((Math.Pow(color.R, 2) + 1) * cR),
+                //                     (byte)((Math.Pow(color.G, 2) + 1) * cG),
+                //                     (byte)((Math.Pow(color.B, 2) + 1) * cB));
+            });
 
-                if (bitmapHistogramData.B[i] > 0)
-                    cB = i;
-            }
+            UpdateHistograms();
+            parentMainPage.WritableOutputImage = editingBitmap;
+            await parentMainPage.UpdateOutputImage();
 
-            cR = 255 / (Math.Log(1 + cR));
-            cG = 255 / (Math.Log(1 + cG));
-            cB = 255 / (Math.Log(1 + cB));
-
-
-
-            if (Double.TryParse(DarkenR.Text, out double r))
-            {
-                editingBitmap.ForEach((x, y, color) =>
-                {
-                    //return Color.FromArgb(color.A,
-                    //                     (byte)((Math.Pow(r, color.R) - 1) * cR),
-                    //                     (byte)((Math.Pow(r, color.G) - 1) * cG),
-                    //                     (byte)((Math.Pow(r, color.B) - 1) * cB));
-
-                    return Color.FromArgb(color.A,
-                                         (byte)((Math.Pow(color.R, 2) + 1) * cR),
-                                         (byte)((Math.Pow(color.G, 2) + 1) * cG),
-                                         (byte)((Math.Pow(color.B, 2) + 1) * cB));
-                });
-
-                UpdateHistograms();
-                parentMainPage.WritableOutputImage = editingBitmap;
-                await parentMainPage.UpdateOutputImage();
-            }
         }
 
 
