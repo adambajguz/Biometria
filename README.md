@@ -17,3 +17,14 @@ Uzupełnij program z poprzednich zajęć o możliwość obliczenia i zaprezentow
 * rozciągnięcie histogramu (dla podanych wartości jasności a i b, ucinane są wartości poniżej a i powyżej b, a pozostała część rozciągana do pełnego zakresu jasności)
 * wyrównanie histogramu (operacja przy użyciu histogramu skumulowanego jako LUT)
 * Aplikacja powinna umożliwiać zapis przekształconych obrazów.
+
+#Zadanie "małe" nr 3
+
+Uzupełnij program z poprzednich zajęć o możliwość wykonywania binaryzacji (progowania). Obrazy kolorowe przed operacją binaryzacji zamień na postać w skali szarości.
+* Binaryzacja z ręcznie wyznaczonym progiem - pozwól użytkownikowi wybrać wartość progu.
+* Automatyczne wyznaczanie progu - wyznacz próg przy pomocy metody Otsu. W metodzie Otsu próg wyznaczany jest przez minimalizację wariancji wewnątrzklasowej (lub maksymalizację wariancji międzyklasowej).
+* Binaryzacja lokalna - wykorzystując metodę Niblacka. W metodzie Niblacka prog wyznaczany jest osobno dla każdego piksela na podstawie średniej i wariancji wartości pikseli w jego otoczeniu. Pozwól użytkownikowi wybrać rozmiar okna oraz wartość k (parametr progowania).
+
+Pomoce:
+* Wykład o progowaniu (autor: dr inż. Marcin Wilczewski, Politechnika Gdańska)
+* Fragmenty ksiażki "Cyfrowe przetwarzanie obrazów" (W. Malina, M. Smiatacz, Akademicka Oficyna Wydawnicza EXIT, Warszawa 2008)
