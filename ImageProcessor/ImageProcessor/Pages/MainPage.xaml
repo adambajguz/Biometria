@@ -35,6 +35,7 @@
                     <MenuFlyoutSeparator/>
                     <MenuFlyoutItem Text="Convert to grayscale" Click="ConvertToGrayScalePageMenuFlyoutItem_Click"/>
                     <MenuFlyoutItem Text="Manual binaryzation" Click="ManualBinaryzationPageMenuFlyoutItem_Click"/>
+                    <MenuFlyoutItem Text="Otsu binaryzation" Click="OtsuBinaryzationPageMenuFlyoutItem_Click"/>
                 </MenuBarItem>
 
                 <MenuBarItem Title="Dialog tools" x:Name="DialogToolsMenuBarItem">

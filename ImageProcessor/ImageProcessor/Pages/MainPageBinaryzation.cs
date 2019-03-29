@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using ImageProcessor.Data;
+using ImageProcessor.Data.OtsuThreshold;
 using ImageProcessor.Dialogs;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -74,6 +76,33 @@ namespace ImageProcessor.Pages
             });
 
             await UpdateOutputImage();
+        }
+
+
+        private async void OtsuBinaryzationPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            ConvertToGrayScalePageMenuFlyoutItem_Click(null, null);
+
+            int threshold = Otsu.GetOtsuThreshold(WriteableOutputImage);
+
+            WriteableOutputImage.ForEach((x, y, curColor) =>
+            {
+                if (curColor.R > threshold)
+                    return Color.FromArgb(255, 255, 255, 255);
+
+                return Color.FromArgb(255, 0, 0, 0);
+            });
+        
+            await UpdateOutputImage();
+
+            ContentDialog dialog = new ContentDialog
+            {
+                Title = "Binaryzation",
+                Content = "Otsu threshold value = " + threshold,
+                CloseButtonText = "Ok"
+            };
+
+            ContentDialogResult result = await dialog.ShowAsync();
         }
     }
 }
