@@ -49,72 +49,11 @@ namespace ImageProcessor.Data
             int height = sourceData.PixelHeight;
             int size = radius * 2;
 
-
             sourceData.ForEach((x, y, curColor) =>
             {
-                long sum = 0;
-                int count = 0;
+               
 
-                for (int i = 0; i < size; i++)
-                {
-                    int ir = i - radius;
-                    int t = y + ir;
-
-                    if (t < 0)
-                        continue;
-                    if (t >= height)
-                        break;
-
-                    for (int j = 0; j < size; j++)
-                    {
-                        int jr = j - radius;
-                        t = x + jr;
-
-                        if (t < 0)
-                            continue;
-                        if (t >= width)
-                            continue;
-
-                        sum += curColor.R;
-                        count++;
-                    }
-                }
-
-                double mean = sum / (double)count;
-                double variance = 0;
-
-                for (int i = 0; i < size; i++)
-                {
-                    int ir = i - radius;
-                    int t = y + ir;
-
-                    if (t < 0)
-                        continue;
-                    if (t >= height)
-                        break;
-
-                    for (int j = 0; j < size; j++)
-                    {
-                        int jr = j - radius;
-                        t = x + jr;
-
-                        if (t < 0)
-                            continue;
-                        if (t >= width)
-                            continue;
-
-                        byte val = curColor.R;
-                        variance += (val - mean) * (val - mean);
-                    }
-                }
-
-                variance /= count - 1;
-
-                double cut = mean + k * Math.Sqrt(variance) - c;
-
-                byte rgb = (curColor.R > cut) ? (byte)255 : (byte)0;
-
-                return Color.FromArgb(255, rgb, rgb, rgb);
+                return Color.FromArgb(255, 0, 0, 0);
             });
 
 
