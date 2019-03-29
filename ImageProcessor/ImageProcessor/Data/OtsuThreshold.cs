@@ -25,8 +25,7 @@ namespace ImageProcessor.Data
             return sum;
         }
 
-        // finds the maximum element in a vector
-        private static int FindMax(double[] vec)
+        private static int FindMaxElementIndex(double[] vec)
         {
             double maxVec = 0;
             int idx = 0;
@@ -41,7 +40,6 @@ namespace ImageProcessor.Data
             return idx;
         }
 
-        // find otsu threshold
         public static int GetOtsuThreshold(WriteableBitmap bmp)
         {
             double[] vet = new double[256];
@@ -63,7 +61,7 @@ namespace ImageProcessor.Data
                 //vet[k] = (float)Math.Pow((Mx(0, k, hist) * p2) - (Mx(k + 1, 255, hist) * p1), 2) / p12;
             }
 
-            return FindMax(vet);
+            return FindMaxElementIndex(vet);
         }
     }
 
