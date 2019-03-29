@@ -33,7 +33,7 @@
         <TextBlock Grid.Row="1" Grid.Column="0" Text="X:" Margin="4" VerticalAlignment="Center" />
         <TextBox x:Name="XTextBox" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="4"
                  TextChanged="TextBox_TextChanged" TextChanging="TextBox_TextChanging"/>
-        
+
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Y:" Margin="4" VerticalAlignment="Center" />
         <TextBox x:Name="YTextBox"  Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Margin="4"
                  TextChanged="TextBox_TextChanged" TextChanging="TextBox_TextChanging"/>

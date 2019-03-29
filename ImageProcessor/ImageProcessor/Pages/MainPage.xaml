@@ -32,6 +32,9 @@
                 <MenuBarItem Title="Tools" x:Name="ToolsMenuBarItem">
                     <MenuFlyoutItem Text="Pixel manager" Click="OpenPixelManagerPageMenuFlyoutItem_Click"/>
                     <MenuFlyoutItem Text="Histograms" Click="OpenHistogramsPageMenuFlyoutItem_Click"/>
+                    <MenuFlyoutSeparator/>
+                    <MenuFlyoutItem Text="Convert to grayscale" Click="ConvertToGrayScalePageMenuFlyoutItem_Click"/>
+                    <MenuFlyoutItem Text="Manual binaryzation" Click="ManualBinaryzationPageMenuFlyoutItem_Click"/>
                 </MenuBarItem>
 
                 <MenuBarItem Title="Dialog tools" x:Name="DialogToolsMenuBarItem">

@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace ImageProcessor.Pages
 {
-    public partial class MainPage : Page
+    public partial class MainPage
     {
 
         private void ContentFrame_NavigationFailed(object sender, NavigationFailedEventArgs e) => throw new Exception("Failed to load Page " + e.SourcePageType.FullName);

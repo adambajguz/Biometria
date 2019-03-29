@@ -127,7 +127,7 @@ namespace ImageProcessor.Pages
                 });
 
                 UpdateHistograms();
-                parentMainPage.WritableOutputImage = editingBitmap;
+                parentMainPage.WriteableOutputImage = editingBitmap;
                 await parentMainPage.UpdateOutputImage();
             }
         }
@@ -164,7 +164,7 @@ namespace ImageProcessor.Pages
 
 
             UpdateHistograms();
-            parentMainPage.WritableOutputImage = editingBitmap;
+            parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
         }
 
@@ -206,9 +206,8 @@ namespace ImageProcessor.Pages
             });
 
             UpdateHistograms();
-            parentMainPage.WritableOutputImage = editingBitmap;
+            parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
-
         }
 
 
@@ -254,7 +253,7 @@ namespace ImageProcessor.Pages
                     });
 
                     UpdateHistograms();
-                    parentMainPage.WritableOutputImage = editingBitmap;
+                    parentMainPage.WriteableOutputImage = editingBitmap;
                     await parentMainPage.UpdateOutputImage();
                 }
             }
@@ -301,7 +300,7 @@ namespace ImageProcessor.Pages
             });
 
             UpdateHistograms();
-            parentMainPage.WritableOutputImage = editingBitmap;
+            parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
         }
 

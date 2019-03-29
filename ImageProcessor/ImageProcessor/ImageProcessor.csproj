@@ -120,9 +120,13 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Data\ImageHistogramData.cs" />
+    <Compile Include="Dialogs\ManualBinaryzationDialog.xaml.cs">
+      <DependentUpon>ManualBinaryzationDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\HistogramManipulationPage.xaml.cs">
       <DependentUpon>HistogramManipulationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\MainPageBinaryzation.cs" />
     <Compile Include="Pages\MainPageNavigation.xaml.cs" />
     <Compile Include="Dialogs\PixelManagerDialog.xaml.cs">
       <DependentUpon>PixelManagerDialog.xaml</DependentUpon>
@@ -195,6 +199,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Dialogs\ManualBinaryzationDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Dialogs\PixelManagerDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

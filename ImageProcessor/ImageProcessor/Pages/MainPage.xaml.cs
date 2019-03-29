@@ -66,7 +66,7 @@ namespace ImageProcessor.Pages
         private CanvasVirtualBitmap InputVirtualBitmap;
         private IRandomAccessStream OutputImageStream;
         private CanvasVirtualBitmap OutputVirtualBitmap;
-        public WriteableBitmap WritableOutputImage;
+        public WriteableBitmap WriteableOutputImage;
 
         private async void OpenImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
@@ -125,8 +125,8 @@ namespace ImageProcessor.Pages
                 {
                     BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
                     SoftwareBitmap softwareBitmap1 = await decoder.GetSoftwareBitmapAsync();
-                    WritableOutputImage = new WriteableBitmap(softwareBitmap1.PixelWidth, softwareBitmap1.PixelHeight);
-                    WritableOutputImage.SetSource(stream);
+                    WriteableOutputImage = new WriteableBitmap(softwareBitmap1.PixelWidth, softwareBitmap1.PixelHeight);
+                    WriteableOutputImage.SetSource(stream);
 
                     await UpdateOutputImage();
                 }
@@ -157,7 +157,7 @@ namespace ImageProcessor.Pages
 
         public async Task UpdateOutputImage()
         {
-            SoftwareBitmap softWriteableOutputImage = SoftwareBitmap.CreateCopyFromBuffer(WritableOutputImage.PixelBuffer, BitmapPixelFormat.Bgra8, WritableOutputImage.PixelWidth, WritableOutputImage.PixelHeight);
+            SoftwareBitmap softWriteableOutputImage = SoftwareBitmap.CreateCopyFromBuffer(WriteableOutputImage.PixelBuffer, BitmapPixelFormat.Bgra8, WriteableOutputImage.PixelWidth, WriteableOutputImage.PixelHeight);
 
             OutputImageStream = await GetRandomAccessStreamFromSoftwareBitmap(softWriteableOutputImage, BitmapEncoder.PngEncoderId);
 
@@ -190,7 +190,7 @@ namespace ImageProcessor.Pages
                 CachedFileManager.DeferUpdates(file);
                 // write to file
 
-                SoftwareBitmap softWriteableOutputImage = SoftwareBitmap.CreateCopyFromBuffer(WritableOutputImage.PixelBuffer, BitmapPixelFormat.Bgra8, WritableOutputImage.PixelWidth, WritableOutputImage.PixelHeight);
+                SoftwareBitmap softWriteableOutputImage = SoftwareBitmap.CreateCopyFromBuffer(WriteableOutputImage.PixelBuffer, BitmapPixelFormat.Bgra8, WriteableOutputImage.PixelWidth, WriteableOutputImage.PixelHeight);
 
                 SaveSoftwareBitmapToFile(softWriteableOutputImage, file);
 
@@ -309,7 +309,7 @@ namespace ImageProcessor.Pages
 
         private async void OpenPixelManagerDialogMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            PixelManagerDialog dialog = new PixelManagerDialog(WritableOutputImage);
+            PixelManagerDialog dialog = new PixelManagerDialog(WriteableOutputImage);
             await dialog.ShowAsync();
 
             if (dialog.ExitResult == PixelManagerDialogExitResult.BitmapChanged)
@@ -318,9 +318,9 @@ namespace ImageProcessor.Pages
             }
         }
 
-        private void OpenPixelManagerPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e) => NavView_Navigate(PixelManagerTag, WritableOutputImage);
+        private void OpenPixelManagerPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e) => NavView_Navigate(PixelManagerTag, WriteableOutputImage);
 
-        private void OpenHistogramsPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e) => NavView_Navigate(HistogramManipulationTag, WritableOutputImage);
+        private void OpenHistogramsPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e) => NavView_Navigate(HistogramManipulationTag, WriteableOutputImage);
 
         private async void AboutMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
@@ -467,5 +467,6 @@ namespace ImageProcessor.Pages
         }
 
         private void ExitMenuFlyoutItem_Click(object sender, RoutedEventArgs e) => CoreApplication.Exit();
+
     }
 }
