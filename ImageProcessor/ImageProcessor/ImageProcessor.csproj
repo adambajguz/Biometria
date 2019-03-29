@@ -120,7 +120,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Data\ImageHistogramData.cs" />
-    <Compile Include="Data\OtsuTreshold.cs" />
+    <Compile Include="Data\NiblackThreshold.cs" />
+    <Compile Include="Data\OtsuThreshold.cs" />
     <Compile Include="Dialogs\ManualBinaryzationDialog.xaml.cs">
       <DependentUpon>ManualBinaryzationDialog.xaml</DependentUpon>
     </Compile>

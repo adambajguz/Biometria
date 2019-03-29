@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ImageProcessor.Data;
-using ImageProcessor.Data.OtsuThreshold;
 using ImageProcessor.Dialogs;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -99,6 +98,26 @@ namespace ImageProcessor.Pages
             {
                 Title = "Binaryzation",
                 Content = "Otsu threshold value = " + threshold,
+                CloseButtonText = "Ok"
+            };
+
+            ContentDialogResult result = await dialog.ShowAsync();
+        }
+
+        private async void NiblackinaryzationPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            ConvertToGrayScalePageMenuFlyoutItem_Click(null, null);
+
+            NiblackThreshold niblack = new NiblackThreshold();
+            niblack.ProcessFilter(WriteableOutputImage);
+            
+
+            await UpdateOutputImage();
+
+            ContentDialog dialog = new ContentDialog
+            {
+                Title = "Binaryzation",
+                Content = "Niblack threshold value = ",
                 CloseButtonText = "Ok"
             };
 
