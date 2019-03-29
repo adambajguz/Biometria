@@ -63,21 +63,16 @@ namespace ImageProcessor.Pages
 
         private async Task ManualBinaryzation(int threshold)
         {
-            WriteableBitmap tmpBitmap = WriteableOutputImage.Clone();
+            ConvertToGrayScalePageMenuFlyoutItem_Click(null, null);
 
-
-            tmpBitmap.ForEach((x, y, curColor) =>
-            {
-                if (curColor.R != curColor.G || curColor.R != curColor.B || curColor.G != curColor.B)
-                    ConvertToGrayScalePageMenuFlyoutItem_Click(null, null);
-
+            WriteableOutputImage.ForEach((x, y, curColor) =>
+            {             
                 if (curColor.R > threshold)
-                    return Color.FromArgb(0, 255, 255, 255);
+                    return Color.FromArgb(255, 255, 255, 255);
 
-                return Color.FromArgb(0, 0, 0, 0);
+                return Color.FromArgb(255, 0, 0, 0);
             });
 
-            WriteableOutputImage = tmpBitmap;
             await UpdateOutputImage();
         }
     }
