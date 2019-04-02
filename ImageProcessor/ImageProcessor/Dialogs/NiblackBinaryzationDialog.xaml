@@ -29,7 +29,7 @@
 
         <TextBlock Grid.Column="0" Grid.Row="1" Text="k:" VerticalAlignment="Center" Margin="0,0,4,0"/>
         <Slider x:Name="SliderValue2" Grid.Row="1" Grid.Column="1" Margin="4" Maximum="1"
-                 TickFrequency="0.1" TickPlacement="Outside" Value="0.2" StepFrequency="0.01" />
-        <TextBlock Text="{x:Bind SliderValue2.Value.ToString(), Mode=OneWay}" Grid.Row="1" Grid.Column="2" />
+                 TickFrequency="0.1" TickPlacement="Outside" Value="0.2" StepFrequency="0.01"/>
+        <TextBlock x:Name="SliderValue2Text" Grid.Row="1" Grid.Column="2" />
     </Grid>
 </ContentDialog>
