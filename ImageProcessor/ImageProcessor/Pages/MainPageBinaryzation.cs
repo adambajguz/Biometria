@@ -67,7 +67,7 @@ namespace ImageProcessor.Pages
             ConvertToGrayScalePageMenuFlyoutItem_Click(null, null);
 
             WriteableOutputImage.ForEach((x, y, curColor) =>
-            {             
+            {
                 if (curColor.R > threshold)
                     return Color.FromArgb(255, 255, 255, 255);
 
@@ -91,7 +91,7 @@ namespace ImageProcessor.Pages
 
                 return Color.FromArgb(255, 0, 0, 0);
             });
-        
+
             await UpdateOutputImage();
 
             ContentDialog dialog = new ContentDialog
@@ -106,21 +106,27 @@ namespace ImageProcessor.Pages
 
         private async void NiblackinaryzationPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            NiblackBinaryzationDialog dialog = new NiblackBinaryzationDialog();
+            ContentDialogResult result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Secondary)
+                await NiblackBinaryzation(dialog.SValue, dialog.KValue);
+            else
+            {
+                // The user clicked the CLoseButton, pressed ESC, Gamepad B, or the system back button.
+                // Do nothing.
+            }
+        }
+
+
+        private async Task NiblackBinaryzation(int size = 25, double k = 0.5)
+        {
             ConvertToGrayScalePageMenuFlyoutItem_Click(null, null);
 
-            NiblackThreshold niblack = new NiblackThreshold(25, 0.5);
+            NiblackThreshold niblack = new NiblackThreshold(size, k);
             WriteableOutputImage = niblack.Threshold(WriteableOutputImage);
-            
+
             await UpdateOutputImage();
-
-            ContentDialog dialog = new ContentDialog
-            {
-                Title = "Binaryzation",
-                Content = "Niblack threshold value = ",
-                CloseButtonText = "Ok"
-            };
-
-            ContentDialogResult result = await dialog.ShowAsync();
         }
     }
 }

@@ -6,16 +6,16 @@ namespace ImageProcessor.Data
     public class NiblackThreshold
     {
 
-        private readonly int neighborhood;
+        private readonly int neighborhoodSize;
         private readonly double k;
 
         /**
-         * @param neighborhood The size of the box to use for the local threshold. Must be odd.
-         * @param k Coefficient for the standard deviation.
+         * neighborhood - the size of the box to use for the local threshold. Must be odd.
+         * k - coefficient for the standard deviation.
          */
-        public NiblackThreshold(int neighborhood, double k)
+        public NiblackThreshold(int neighborhoodSize, double k)
         {
-            this.neighborhood = neighborhood;
+            this.neighborhoodSize = neighborhoodSize;
             this.k = k;
         }
 
@@ -56,12 +56,9 @@ namespace ImageProcessor.Data
             }
 
 
-
-
-
             double[,] dataFloat = ArrayUtil.toDoubleArray(data);
-            double[,] stdev = ArrayUtil.stdevNeighborhood(dataFloat, neighborhood);
-            double[,] mean = ArrayUtil.meanNeighborhood(dataFloat, neighborhood);
+            double[,] stdev = ArrayUtil.stdevNeighborhood(dataFloat, neighborhoodSize);
+            double[,] mean = ArrayUtil.meanNeighborhood(dataFloat, neighborhoodSize);
             double[,] threshold = ArrayUtil.add(dataFloat, mean, ArrayUtil.multiplyEach(dataFloat, stdev, k));
 
             input.ForEach((x, y, curColor) =>

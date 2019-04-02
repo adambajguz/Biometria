@@ -124,6 +124,9 @@
     <Compile Include="Data\ImageHistogramData.cs" />
     <Compile Include="Data\NiblackThreshold.cs" />
     <Compile Include="Data\OtsuThreshold.cs" />
+    <Compile Include="Dialogs\NiblackBinaryzationDialog.xaml.cs">
+      <DependentUpon>NiblackBinaryzationDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ManualBinaryzationDialog.xaml.cs">
       <DependentUpon>ManualBinaryzationDialog.xaml</DependentUpon>
     </Compile>
@@ -203,6 +206,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Dialogs\NiblackBinaryzationDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Dialogs\ManualBinaryzationDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
