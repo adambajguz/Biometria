@@ -119,6 +119,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data\ArrayExtension.cs" />
+    <Compile Include="Data\ArrayUtil.cs" />
     <Compile Include="Data\ImageHistogramData.cs" />
     <Compile Include="Data\NiblackThreshold.cs" />
     <Compile Include="Data\OtsuThreshold.cs" />

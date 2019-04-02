@@ -108,10 +108,9 @@ namespace ImageProcessor.Pages
         {
             ConvertToGrayScalePageMenuFlyoutItem_Click(null, null);
 
-            NiblackThreshold niblack = new NiblackThreshold();
-            niblack.ProcessFilter(WriteableOutputImage);
+            NiblackThreshold niblack = new NiblackThreshold(25, 0.5);
+            WriteableOutputImage = niblack.Threshold(WriteableOutputImage);
             
-
             await UpdateOutputImage();
 
             ContentDialog dialog = new ContentDialog
