@@ -23,7 +23,7 @@ namespace ImageProcessor.Data
         {
             int rows = input.PixelHeight;
             int cols = input.PixelWidth;
-            short[,] data = new short[rows, cols];
+            short[,] data = new short[cols, rows];
 
 
             using (var context = input.GetBitmapContext(ReadWriteMode.ReadOnly))
