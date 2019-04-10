@@ -18,6 +18,7 @@ Uzupełnij program z poprzednich zajęć o możliwość obliczenia i zaprezentow
 * wyrównanie histogramu (operacja przy użyciu histogramu skumulowanego jako LUT)
 * Aplikacja powinna umożliwiać zapis przekształconych obrazów.
 
+
 #Zadanie "małe" nr 3
 
 Uzupełnij program z poprzednich zajęć o możliwość wykonywania binaryzacji (progowania). Obrazy kolorowe przed operacją binaryzacji zamień na postać w skali szarości.
@@ -28,3 +29,12 @@ Uzupełnij program z poprzednich zajęć o możliwość wykonywania binaryzacji 
 Pomoce:
 * Wykład o progowaniu (autor: dr inż. Marcin Wilczewski, Politechnika Gdańska)
 * Fragmenty ksiażki "Cyfrowe przetwarzanie obrazów" (W. Malina, M. Smiatacz, Akademicka Oficyna Wydawnicza EXIT, Warszawa 2008)
+
+
+#Zadanie "małe" nr 4
+
+Dodaj do programu możliwość filtrowania obrazu:
+
+* Przy pomocy filtrów liniowych opartych o funkcję splotu (filtry konwolucyjne). Wykorzystaj maskę 3x3, dając uzytkownikowi możliwość wprowadzenia jej wartości. Przetestuj działanie na kilku standardowych operatorach: rozmywającym (filtr dolnoprzepustowy), Prewitta, Sobela, Laplace'a, wykrywający narożniki.
+* Przy pomocy filtru Kuwahara.
+* Przy pomocy filtru medianowego (dla masek 3x3 i 5x5).
