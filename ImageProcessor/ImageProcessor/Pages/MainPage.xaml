@@ -37,6 +37,26 @@
                     <MenuFlyoutItem Text="Manual binaryzation" Click="ManualBinaryzationPageMenuFlyoutItem_Click"/>
                     <MenuFlyoutItem Text="Otsu binaryzation" Click="OtsuBinaryzationPageMenuFlyoutItem_Click"/>
                     <MenuFlyoutItem Text="Niblack binaryzation" Click="NiblackinaryzationPageMenuFlyoutItem_Click"/>
+                    <MenuFlyoutSeparator/>
+                    <MenuFlyoutSubItem Text="Convolution filters">
+                        <MenuFlyoutItem Text="Low/High pass or custom" Click="CustomPageMenuFlyoutItem_Click"/>
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutItem Text="Prewitt" Click="PrewittPageMenuFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Prewitt X" Click="PrewittXPageMenuFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Prewitt Y" Click="PrewittYPageMenuFlyoutItem_Click"/>
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutItem Text="Sobel" Click="SobelPageMenuFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Sobel X" Click="SobelXPageMenuFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Sobel Y" Click="SobelYPageMenuFlyoutItem_Click"/>
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutItem Text="Laplace #1" Click="Laplace1PageMenuFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Laplace #2" Click="Laplace2PageMenuFlyoutItem_Click"/>
+                    </MenuFlyoutSubItem>   
+                    <MenuFlyoutSubItem Text="Nonlinear filters">
+                        <MenuFlyoutItem Text="Kuwahara" Click="KuwaharaPageMenuFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Median 3x3" Click="Median3x3PageMenuFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Median 5x5" Click="Medain5x5PageMenuFlyoutItem_Click"/>
+                        </MenuFlyoutSubItem>
                 </MenuBarItem>
 
                 <MenuBarItem Title="Dialog tools" x:Name="DialogToolsMenuBarItem">

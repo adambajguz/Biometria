@@ -121,19 +121,25 @@
     </Compile>
     <Compile Include="Data\ArrayExtension.cs" />
     <Compile Include="Data\ArrayUtil.cs" />
+    <Compile Include="Data\GradientMagnitude.cs" />
     <Compile Include="Data\ImageHistogramData.cs" />
     <Compile Include="Data\NiblackThreshold.cs" />
     <Compile Include="Data\OtsuThreshold.cs" />
+    <Compile Include="Data\WriteableBitmapCovolute.cs" />
+    <Compile Include="Dialogs\CustomConvolutionFilterDialog.xaml.cs">
+      <DependentUpon>CustomConvolutionFilterDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\NiblackBinaryzationDialog.xaml.cs">
       <DependentUpon>NiblackBinaryzationDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\ManualBinaryzationDialog.xaml.cs">
       <DependentUpon>ManualBinaryzationDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\MainPageFilters.xaml.cs" />
     <Compile Include="Pages\HistogramManipulationPage.xaml.cs">
       <DependentUpon>HistogramManipulationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\MainPageBinaryzation.cs" />
+    <Compile Include="Pages\MainPageBinaryzation.xaml.cs" />
     <Compile Include="Pages\MainPageNavigation.xaml.cs" />
     <Compile Include="Dialogs\PixelManagerDialog.xaml.cs">
       <DependentUpon>PixelManagerDialog.xaml</DependentUpon>
@@ -206,6 +212,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Dialogs\CustomConvolutionFilterDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Dialogs\NiblackBinaryzationDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

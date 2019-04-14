@@ -106,7 +106,6 @@ namespace ImageProcessor.Pages
 
         private async void NiblackinaryzationPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            ConvertToGrayScalePageMenuFlyoutItem_Click(null, null);
 
             NiblackBinaryzationDialog dialog = new NiblackBinaryzationDialog();
             ContentDialogResult result = await dialog.ShowAsync();

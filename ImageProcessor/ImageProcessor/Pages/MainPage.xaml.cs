@@ -468,5 +468,6 @@ namespace ImageProcessor.Pages
 
         private void ExitMenuFlyoutItem_Click(object sender, RoutedEventArgs e) => CoreApplication.Exit();
 
+
     }
 }
