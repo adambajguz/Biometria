@@ -624,11 +624,19 @@ namespace Biometria
             if (AfterImg.Format != PixelFormats.Bgr24)
                 AfterImg = new FormatConvertedBitmap(AfterImg, PixelFormats.Bgr24, null, 0);
 
+<<<<<<< Updated upstream
             int totalpixels = AfterImg.PixelWidth * AfterImg.PixelHeight;
 
             histR[0] = Convert.ToInt32((rHistogram[0] * rHistogram.Length) / totalpixels);
             histG[0] = Convert.ToInt32((gHistogram[0] * gHistogram.Length) / totalpixels);
             histB[0] = Convert.ToInt32((bHistogram[0] * bHistogram.Length) / totalpixels);
+=======
+            AfterImage.Source = AfterImg;
+
+            histR[0] = Convert.ToInt32((rHistogram[0] * rHistogram.Length) / (AfterImg.Width * AfterImg.Height));
+            histG[0] = Convert.ToInt32((gHistogram[0] * gHistogram.Length) / (AfterImg.Width * AfterImg.Height));
+            histB[0] = Convert.ToInt32((bHistogram[0] * bHistogram.Length) / (AfterImg.Width * AfterImg.Height));
+>>>>>>> Stashed changes
 
             long cumulativeR = rHistogram[0];
             long cumulativeG = gHistogram[0];
