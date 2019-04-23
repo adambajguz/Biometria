@@ -79,6 +79,56 @@
                     <TextBox x:Name="XNiblackText" Grid.Column="1" HorizontalAlignment="Left" Height="30" Margin="1114.8,503,0,0" TextWrapping="Wrap" Text="25" VerticalAlignment="Top" Width="69"/>
                 </Grid>
             </TabItem>
+            <TabItem Header="Filters">
+                <Grid>
+                    <Image x:Name="BeforeImageF" Width="350" Height="350" Margin="516.5,37,508.6,338.6" Grid.Column="1"/>
+                    <Image x:Name="AfterImageF" Width="350" Height="350" Margin="979.5,37,45.6,338.6" Grid.Column="1"/>
+                    <Label Content="Before" HorizontalAlignment="Left" Margin="668.5,0,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+                    <Label Content ="After" HorizontalAlignment="Left" Margin="1140.5,0,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+                    <GroupBox Header="Convolution filters" HorizontalAlignment="Left" Height="390" Margin="28,37,0,0" VerticalAlignment="Top" Width="481">
+                        <Grid>
+                            <Label Content="Low Pass" HorizontalAlignment="Left" Margin="28,64,0,0" VerticalAlignment="Top" Width="103"/>
+                            <Label Content="High Pass" HorizontalAlignment="Left" Margin="28,90,0,0" VerticalAlignment="Top" Width="103"/>
+                            <Label Content="Custom:" HorizontalAlignment="Left" Margin="28,121,0,0" VerticalAlignment="Top" Width="103"/>
+                            <Button x:Name="LowPassBtn" Content="Go" HorizontalAlignment="Left" Margin="384,67,0,0" VerticalAlignment="Top" Width="75" Click="LowPassBtn_Click"/>
+                            <Button x:Name="HighPassBtn" Content="Go" HorizontalAlignment="Left" Margin="384,93,0,0" VerticalAlignment="Top" Width="75" Click="HighPassBtn_Click"/>
+                            <Button x:Name="CustomPassBtn" Content="Go" HorizontalAlignment="Left" Margin="384,132,0,0" VerticalAlignment="Top" Width="75" Click="CustomPassBtn_Click"/>
+                            <TextBox x:Name="t1x1Text" HorizontalAlignment="Left" Height="23" Margin="136,124,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="31"/>
+                            <TextBox x:Name="t2x1Text" HorizontalAlignment="Left" Height="23" Margin="172,124,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="31"/>
+                            <TextBox x:Name="t3x1Text" HorizontalAlignment="Left" Height="23" Margin="208,124,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="31"/>
+                            <TextBox x:Name="t1x2Text" HorizontalAlignment="Left" Height="23" Margin="136,152,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="31"/>
+                            <TextBox x:Name="t2x2Text" HorizontalAlignment="Left" Height="23" Margin="172,152,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="31"/>
+                            <TextBox x:Name="t3x2Text" HorizontalAlignment="Left" Height="23" Margin="208,152,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="31"/>
+                            <TextBox x:Name="t1x3Text" HorizontalAlignment="Left" Height="23" Margin="136,180,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="31"/>
+                            <TextBox x:Name="t2x3Text" HorizontalAlignment="Left" Height="23" Margin="172,180,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="31"/>
+                            <TextBox x:Name="t3x3Text" HorizontalAlignment="Left" Height="23" Margin="208,180,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="31"/>
+                            <Label Content="Previtt X" HorizontalAlignment="Left" Margin="28,225,0,0" VerticalAlignment="Top" Width="103"/>
+                            <Label Content="Previtt Y" HorizontalAlignment="Left" Margin="28,251,0,0" VerticalAlignment="Top" Width="103"/>
+                            <Label Content="Sobel X" HorizontalAlignment="Left" Margin="28,299,0,0" VerticalAlignment="Top" Width="103"/>
+                            <Label Content="Sobel Y" HorizontalAlignment="Left" Margin="28,330,0,0" VerticalAlignment="Top" Width="103"/>
+                            <Button x:Name="PrevittXBtn" Content="Go" HorizontalAlignment="Left" Margin="384,225,0,0" VerticalAlignment="Top" Width="75" Click="PrevittXBtn_Click"/>
+                            <Button x:Name="PrevittYBtn" Content="Go" HorizontalAlignment="Left" Margin="384,254,0,0" VerticalAlignment="Top" Width="75" Click="PrevittYBtn_Click"/>
+                            <Button x:Name="SobelXBtn" Content="Go" HorizontalAlignment="Left" Margin="384,302,0,0" VerticalAlignment="Top" Width="75" Click="SobelXBtn_Click"/>
+                            <Button x:Name="SobelYBtn" Content="Go" HorizontalAlignment="Left" Margin="384,333,0,0" VerticalAlignment="Top" Width="75" Click="SobelYBtn_Click"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Non-Linear Filters" HorizontalAlignment="Left" Height="162" Margin="28,486,0,0" VerticalAlignment="Top" Width="481">
+                        <Grid Margin="0,0,0,-12">
+                            <Label Content="Laplace" HorizontalAlignment="Left" Margin="35,10,0,0" VerticalAlignment="Top" Width="77"/>
+                            <Label Content="Kuwahara" HorizontalAlignment="Left" Margin="35,41,0,0" VerticalAlignment="Top" Width="77"/>
+                            <Label Content="Median 3x3" HorizontalAlignment="Left" Margin="35,72,0,0" VerticalAlignment="Top" Width="77"/>
+                            <Label Content="Median 5x5" HorizontalAlignment="Left" Margin="35,103,0,0" VerticalAlignment="Top" Width="77"/>
+                            <Button x:Name="LaplaceBtn" Content="Go" HorizontalAlignment="Left" Margin="384,13,0,0" VerticalAlignment="Top" Width="75" Click="LaplaceBtn_Click"/>
+                            <Button x:Name="KuwaharaBtn" Content="Go" HorizontalAlignment="Left" Margin="384,44,0,0" VerticalAlignment="Top" Width="75" Click="KuwaharaBtn_Click"/>
+                            <Button x:Name="Median3x3Btn" Content="Go" HorizontalAlignment="Left" Margin="384,75,0,0" VerticalAlignment="Top" Width="75" Click="Median3x3Btn_Click"/>
+                            <Button x:Name="Median5x5Btn" Content="Go" HorizontalAlignment="Left" Margin="384,106,0,0" VerticalAlignment="Top" Width="75" Click="Median5x5Btn_Click"/>
+
+                        </Grid>
+                    </GroupBox>
+
+
+                </Grid>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

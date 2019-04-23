@@ -54,6 +54,8 @@ namespace Biometria
                 bitmap = (BitmapSource)imageSource;
                 BeforeImage.Source = new BitmapImage(new Uri(fileDialog.FileName));
                 AfterImage.Source = new BitmapImage(new Uri(fileDialog.FileName));
+                BeforeImageF.Source = new BitmapImage(new Uri(fileDialog.FileName));
+                AfterImageF.Source = new BitmapImage(new Uri(fileDialog.FileName));
                 AfterImg = (BitmapSource)AfterImage.Source;
                 wb = new WriteableBitmap((BitmapSource)imageSource);
             }
@@ -993,6 +995,463 @@ namespace Biometria
             DrawHistogram(AHistogramB, "B");
 
             DrawAverageHistogram(AHistogramR, AHistogramG, AHistogramB);
+        }
+
+        public int[,] kernel = new int[3, 3];
+
+        public void setCustomKernel()
+        {
+            kernel[0, 0] = Convert.ToInt32(t1x1Text.Text);
+            kernel[1, 0] = Convert.ToInt32(t2x1Text.Text);
+            kernel[2, 0] = Convert.ToInt32(t3x1Text.Text);
+            kernel[0, 1] = Convert.ToInt32(t1x2Text.Text);
+            kernel[1, 1] = Convert.ToInt32(t2x2Text.Text);
+            kernel[2, 1] = Convert.ToInt32(t3x2Text.Text);
+            kernel[0, 2] = Convert.ToInt32(t1x3Text.Text);
+            kernel[1, 2] = Convert.ToInt32(t2x3Text.Text);
+            kernel[2, 2] = Convert.ToInt32(t3x3Text.Text);
+        }
+
+        public void setLowPassKernel()
+        {
+            kernel[0, 0] = 1;
+            kernel[0, 1] = 2;
+            kernel[0, 2] = 1;
+            kernel[1, 0] = 2;
+            kernel[1, 1] = 4;
+            kernel[1, 2] = 2;
+            kernel[2, 0] = 1;
+            kernel[2, 1] = 2;
+            kernel[2, 2] = 1;
+        }
+
+        public void setHighPassKernel()
+        {
+            kernel[0, 0] = -1;
+            kernel[0, 1] = -1;
+            kernel[0, 2] = -1;
+            kernel[1, 0] = -1;
+            kernel[1, 1] = 9;
+            kernel[1, 2] = -1;
+            kernel[2, 0] = -1;
+            kernel[2, 1] = -1;
+            kernel[2, 2] = -1;
+        }
+
+        public  BitmapSource Convolute( int[,] kernel)
+        {
+            var kernelFactorSum = 0;
+            foreach (var b in kernel)
+            {
+                kernelFactorSum += Math.Abs(b);
+            }
+
+            return Convolute(kernel, kernelFactorSum, 0);
+        }
+
+        public BitmapSource Convolute(int[,] kernel, int kernelFactorSum, int kernelOffsetSum)
+        {
+
+            if (AfterImg.Format != PixelFormats.Bgr24)
+                AfterImg = new FormatConvertedBitmap(AfterImg, PixelFormats.Bgr24, null, 0);
+
+            var bytesPerPixel = (AfterImg.Format.BitsPerPixel + 7) / 8;
+            var bytes = new byte[bytesPerPixel];
+            var bmp = new WriteableBitmap(AfterImg);
+
+            var kh = kernel.GetUpperBound(0) + 1;
+            var kw = kernel.GetUpperBound(1) + 1;
+
+            if ((kw & 1) == 0)
+            {
+                throw new InvalidOperationException("Kernel width must be odd!");
+            }
+            if ((kh & 1) == 0)
+            {
+                throw new InvalidOperationException("Kernel height must be odd!");
+            }
+            
+            var w = AfterImg.PixelWidth;
+            var h = AfterImg.PixelHeight;
+            var result = BitmapFactory.New(w, h);
+            var kwh = kw >> 1;
+            var khh = kh >> 1;
+
+            for (var y = 0; y < h; y++)
+            {
+                for (var x = 0; x < w; x++)
+                {
+                    var a = 0;
+                    var r = 0;
+                    var g = 0;
+                    var b = 0;
+
+                    
+
+                    for (var kx = -kwh; kx <= kwh; kx++)
+                    {
+                        var px = kx + x;
+                        if (px < 0)
+                        {
+                            px = 0;
+                        }
+                        else if (px >= w)
+                        {
+                            px = w - 1;
+                        }
+
+                        for (var ky = -khh; ky <= khh; ky++)
+                        {
+                            var py = ky + y;
+                            if (py < 0)
+                            {
+                                py = 0;
+                            }
+                            else if (py >= h)
+                            {
+                                py = h - 1;
+                            }
+
+                            var rect2 = new Int32Rect(px, py, 1, 1);
+                            AfterImg.CopyPixels(rect2, bytes, bytesPerPixel, 0);
+
+                            var intensityR = bytes[2];
+                            var intensityG = bytes[1];
+                            var intensityB = bytes[0];
+
+
+                            var k = kernel[ky + kwh, kx + khh];
+                            r += intensityR * k;
+                            g += intensityG * k;
+                            b += intensityB * k;
+                        }
+                    }
+                    
+                    var tr = ((r / kernelFactorSum) + kernelOffsetSum);
+                    var tg = ((g / kernelFactorSum) + kernelOffsetSum);
+                    var tb = ((b / kernelFactorSum) + kernelOffsetSum);
+                    
+                    var br = (byte)((tr > 255) ? 255 : ((tr < 0) ? 0 : tr));
+                    var bg = (byte)((tg > 255) ? 255 : ((tg < 0) ? 0 : tg));
+                    var bb = (byte)((tb > 255) ? 255 : ((tb < 0) ? 0 : tb));
+
+                    var rect = new Int32Rect(x, y, 1, 1);
+                    AfterImg.CopyPixels(rect, bytes, bytesPerPixel, 0);
+
+                    bytes[2] = br;
+                    bytes[1] = bg;
+                    bytes[0] = bb;
+
+                    bmp.WritePixels(rect, bytes, bytesPerPixel, 0);
+                }
+                
+            }
+            return bmp;
+        }
+
+
+
+        private void LowPassBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AfterImg = (BitmapSource)BeforeImage.Source;
+
+            setLowPassKernel();
+            var bmp = Convolute(kernel);
+
+            AfterImg = bmp;
+            AfterImage.Source = bmp;
+            AfterImageF.Source = bmp;
+        }
+
+        private void HighPassBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AfterImg = (BitmapSource)BeforeImage.Source;
+
+            setHighPassKernel();
+            var bmp = Convolute(kernel);
+
+            AfterImg = bmp;
+            AfterImage.Source = bmp;
+            AfterImageF.Source = bmp;
+        }
+
+        private void CustomPassBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AfterImg = (BitmapSource)BeforeImage.Source;
+
+            setCustomKernel();
+            var bmp = Convolute(kernel);
+
+            AfterImg = bmp;
+            AfterImage.Source = bmp;
+            AfterImageF.Source = bmp;
+        }
+
+        private static readonly int[,] PrewittX = { {1, 0, -1},{1, 0, -1}, {1, 0, -1}};
+
+        private static readonly int[,] PrewittY = { { 1,  1,  1},{ 0,  0,  0}, {-1, -1, -1}};
+
+        private void PrevittXBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AfterImg = (BitmapSource)BeforeImage.Source;
+            
+            var bmp = Convolute(PrewittX);
+
+            AfterImg = bmp;
+            AfterImage.Source = bmp;
+            AfterImageF.Source = bmp;
+        }
+
+        private void PrevittYBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AfterImg = (BitmapSource)BeforeImage.Source;
+
+            var bmp = Convolute(PrewittY);
+
+            AfterImg = bmp;
+            AfterImage.Source = bmp;
+            AfterImageF.Source = bmp;
+        }
+
+        private static readonly int[,] SobelX = {{-1, 0, 1}, {-2, 0, 2},{-1, 0, 1}};
+
+        private static readonly int[,] SobelY = {{-1, -2, -1}, { 0,  0,  0},{ 1,  2,  1}};
+
+        private void SobelXBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AfterImg = (BitmapSource)BeforeImage.Source;
+
+            var bmp = Convolute(SobelX);
+
+            AfterImg = bmp;
+            AfterImage.Source = bmp;
+            AfterImageF.Source = bmp;
+        }
+
+        private void SobelYBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AfterImg = (BitmapSource)BeforeImage.Source;
+
+            var bmp = Convolute(SobelY);
+
+            AfterImg = bmp;
+            AfterImage.Source = bmp;
+            AfterImageF.Source = bmp;
+        }
+
+        private static readonly int[,] Laplace = {{-1, -1, -1},{-1,  8, -1},{-1, -1, -1}};
+
+        private void LaplaceBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AfterImg = (BitmapSource)BeforeImage.Source;
+
+            var bmp = Convolute(Laplace);
+
+            AfterImg = bmp;
+            AfterImage.Source = bmp;
+            AfterImageF.Source = bmp;
+        }
+
+        public WriteableBitmap KuwaharaFilter(int size)
+        {
+            int width = AfterImg.PixelWidth;
+            int height = AfterImg.PixelHeight;
+
+
+            if (AfterImg.Format != PixelFormats.Bgr24)
+                AfterImg = new FormatConvertedBitmap(AfterImg, PixelFormats.Bgr24, null, 0);
+
+            var bytesPerPixel = (AfterImg.Format.BitsPerPixel + 7) / 8;
+            var bytes = new byte[bytesPerPixel];
+            var bmp = new WriteableBitmap(AfterImg);
+            
+
+                    int[] ApetureMinX = { -(size / 2), 0, -(size / 2), 0 };
+                    int[] ApetureMaxX = { 0, (size / 2), 0, (size / 2) };
+                    int[] ApetureMinY = { -(size / 2), -(size / 2), 0, 0 };
+                    int[] ApetureMaxY = { 0, 0, (size / 2), (size / 2) };
+
+                    for (int x = 0; x < width; ++x)
+                    {
+                        for (int y = 0; y < height; ++y)
+                        {
+                            int[] RValues = { 0, 0, 0, 0 };
+                            int[] GValues = { 0, 0, 0, 0 };
+                            int[] BValues = { 0, 0, 0, 0 };
+                            int[] NumPixels = { 0, 0, 0, 0 };
+                            int[] MaxRValue = { 0, 0, 0, 0 };
+                            int[] MaxGValue = { 0, 0, 0, 0 };
+                            int[] MaxBValue = { 0, 0, 0, 0 };
+                            int[] MinRValue = { 255, 255, 255, 255 };
+                            int[] MinGValue = { 255, 255, 255, 255 };
+                            int[] MinBValue = { 255, 255, 255, 255 };
+                            for (int i = 0; i < 4; ++i)
+                            {
+                                for (int x2 = ApetureMinX[i]; x2 < ApetureMaxX[i]; ++x2)
+                                {
+                                    int TempX = x + x2;
+                                    if (TempX >= 0 && TempX < width)
+                                    {
+                                        for (int y2 = ApetureMinY[i]; y2 < ApetureMaxY[i]; ++y2)
+                                        {
+                                            int TempY = y + y2;
+                                            if (TempY >= 0 && TempY < height)
+                                            {
+                                                var rect2 = new Int32Rect(TempX, TempY, 1, 1);
+                                                AfterImg.CopyPixels(rect2, bytes, bytesPerPixel, 0);
+
+                                                var intensityR = bytes[2];
+                                                var intensityG = bytes[1];
+                                                var intensityB = bytes[0];
+                                                
+                                                RValues[i] += intensityR;
+                                                GValues[i] += intensityG;
+                                                BValues[i] += intensityB;
+
+                                                if (intensityR > MaxRValue[i])
+                                                    MaxRValue[i] = intensityR;
+                                                else if (intensityR < MinRValue[i])
+                                                    MinRValue[i] = intensityR;
+
+                                                if (intensityG > MaxGValue[i])
+                                                    MaxGValue[i] = intensityG;
+                                                else if (intensityG < MinGValue[i])
+                                                    MinGValue[i] = intensityG;
+
+                                                if (intensityB > MaxBValue[i])
+                                                    MaxBValue[i] = intensityB;
+                                                else if (intensityB < MinBValue[i])
+                                                    MinBValue[i] = intensityB;
+
+                                                ++NumPixels[i];
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            int j = 0;
+                            int MinDifference = 10000;
+                            for (int i = 0; i < 4; ++i)
+                            {
+                                int CurrentDifference = (MaxRValue[i] - MinRValue[i]) + (MaxGValue[i] - MinGValue[i]) + (MaxBValue[i] - MinBValue[i]);
+                                if (CurrentDifference < MinDifference && NumPixels[i] > 0)
+                                {
+                                    j = i;
+                                    MinDifference = CurrentDifference;
+                                }
+                            }
+
+                            var rect = new Int32Rect(x, y, 1, 1);
+                            AfterImg.CopyPixels(rect, bytes, bytesPerPixel, 0);
+
+                            bytes[2] = (byte)(RValues[j] / NumPixels[j]);
+                            bytes[1] = (byte)(GValues[j] / NumPixels[j]);
+                            bytes[0] = (byte)(BValues[j] / NumPixels[j]);
+
+                            bmp.WritePixels(rect, bytes, bytesPerPixel, 0);
+                        }
+                    }
+            return bmp;
+        }
+
+        private void KuwaharaBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AfterImg = (BitmapSource)BeforeImage.Source;
+
+            var bmp = KuwaharaFilter(5);
+
+            AfterImg = bmp;
+            AfterImage.Source = bmp;
+            AfterImageF.Source = bmp;
+        }
+
+        public WriteableBitmap MedianFilter(int maskSize)
+        {
+            int width = AfterImg.PixelWidth;
+            int height = AfterImg.PixelHeight;
+
+            if (AfterImg.Format != PixelFormats.Bgr24)
+                AfterImg = new FormatConvertedBitmap(AfterImg, PixelFormats.Bgr24, null, 0);
+
+            var bytesPerPixel = (AfterImg.Format.BitsPerPixel + 7) / 8;
+            var bytes = new byte[bytesPerPixel];
+            var bmp = new WriteableBitmap(AfterImg);
+            
+                    byte[] red, green, blue;
+            
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+                            red = new byte[maskSize * maskSize];
+                            green = new byte[maskSize * maskSize];
+                            blue = new byte[maskSize * maskSize];
+                            int count = 0;
+                            for (int r = y - (maskSize / 2); r <= y + (maskSize / 2); r++)
+                            {
+                                for (int c = x - (maskSize / 2); c <= x + (maskSize / 2); c++)
+                                {
+                                    if (r < 0 || r >= height || c < 0 || c >= width)
+                                    {
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        var rect2 = new Int32Rect(c, r, 1, 1);
+                                        AfterImg.CopyPixels(rect2, bytes, bytesPerPixel, 0);
+
+                                        var intensityR = bytes[2];
+                                        var intensityG = bytes[1];
+                                        var intensityB = bytes[0];
+                                        
+                                        red[count] = intensityR;
+                                        green[count] = intensityG;
+                                        blue[count] = intensityB;
+                                        ++count;
+                                    }
+                                }
+                            }
+                            Array.Sort(red);
+                            Array.Sort(green);
+                            Array.Sort(blue);
+
+                            int index = (count % 2 == 0) ? count / 2 - 1 : count / 2;
+
+                            var rect = new Int32Rect(x, y, 1, 1);
+                            AfterImg.CopyPixels(rect, bytes, bytesPerPixel, 0);
+
+                            bytes[2] = (byte)red[index];
+                            bytes[1] = (byte)green[index];
+                            bytes[0] = (byte)blue[index];
+
+                            bmp.WritePixels(rect, bytes, bytesPerPixel, 0);
+                        }
+                    }
+
+              
+            return bmp;
+        }
+
+        private void Median3x3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            AfterImg = (BitmapSource)BeforeImage.Source;
+
+            var bmp = MedianFilter(3);
+
+            AfterImg = bmp;
+            AfterImage.Source = bmp;
+            AfterImageF.Source = bmp;
+        }
+
+        private void Median5x5Btn_Click(object sender, RoutedEventArgs e)
+        {
+            AfterImg = (BitmapSource)BeforeImage.Source;
+
+            var bmp = MedianFilter(5);
+
+            AfterImg = bmp;
+            AfterImage.Source = bmp;
+            AfterImageF.Source = bmp;
         }
     }
 }
