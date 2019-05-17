@@ -54,7 +54,7 @@ namespace ImageProcessor.Pages
             this.InitializeComponent();
 
             SaveMenuFlyoutItem.IsEnabled = false;
-            DialogToolsMenuBarItem.IsEnabled = false;
+            AdvancedToolsMenuBarItem.IsEnabled = false;
             ToolsMenuBarItem.IsEnabled = false;
             ZoomCommandBar.IsEnabled = false;
 
@@ -67,6 +67,7 @@ namespace ImageProcessor.Pages
         private IRandomAccessStream OutputImageStream;
         private CanvasVirtualBitmap OutputVirtualBitmap;
         public WriteableBitmap WriteableOutputImage;
+        public WriteableBitmap WriteableOutputImageCopy;
 
         private async void OpenImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
@@ -88,7 +89,7 @@ namespace ImageProcessor.Pages
             if (inputFile != null)
             {
                 SaveMenuFlyoutItem.IsEnabled = true;
-                DialogToolsMenuBarItem.IsEnabled = true;
+                AdvancedToolsMenuBarItem.IsEnabled = true;
                 ToolsMenuBarItem.IsEnabled = true;
                 ZoomCommandBar.IsEnabled = true;
 
@@ -127,6 +128,7 @@ namespace ImageProcessor.Pages
                     SoftwareBitmap softwareBitmap1 = await decoder.GetSoftwareBitmapAsync();
                     WriteableOutputImage = new WriteableBitmap(softwareBitmap1.PixelWidth, softwareBitmap1.PixelHeight);
                     WriteableOutputImage.SetSource(stream);
+                    WriteableOutputImageCopy = WriteableOutputImage.Clone();
 
                     await UpdateOutputImage();
                 }
@@ -139,6 +141,15 @@ namespace ImageProcessor.Pages
             }
 
             //await Open();
+        }
+
+
+        private async void ReOpenImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            ContentFrame_Reset();
+
+            WriteableOutputImage = WriteableOutputImageCopy.Clone();
+            await UpdateOutputImage();
         }
 
         private async Task<IRandomAccessStream> GetRandomAccessStreamFromSoftwareBitmap(SoftwareBitmap soft, Guid encoderId)
@@ -319,8 +330,8 @@ namespace ImageProcessor.Pages
         }
 
         private void OpenPixelManagerPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e) => NavView_Navigate(PixelManagerTag, WriteableOutputImage);
-
         private void OpenHistogramsPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e) => NavView_Navigate(HistogramManipulationTag, WriteableOutputImage);
+        private void FingerprintMenuFlyoutItem_Click(object sender, RoutedEventArgs e) => NavView_Navigate(FingerprintTag, WriteableOutputImage);
 
         private async void AboutMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
@@ -467,7 +478,6 @@ namespace ImageProcessor.Pages
         }
 
         private void ExitMenuFlyoutItem_Click(object sender, RoutedEventArgs e) => CoreApplication.Exit();
-
 
     }
 }

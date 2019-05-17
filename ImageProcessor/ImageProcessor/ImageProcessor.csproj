@@ -121,6 +121,7 @@
     </Compile>
     <Compile Include="Data\ArrayExtension.cs" />
     <Compile Include="Data\ArrayUtil.cs" />
+    <Compile Include="Data\BinaryzationHelper.cs" />
     <Compile Include="Data\GradientMagnitude.cs" />
     <Compile Include="Data\ImageHistogramData.cs" />
     <Compile Include="Data\NiblackThreshold.cs" />
@@ -134,6 +135,9 @@
     </Compile>
     <Compile Include="Dialogs\ManualBinaryzationDialog.xaml.cs">
       <DependentUpon>ManualBinaryzationDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\FingerprintPage.xaml.cs">
+      <DependentUpon>FingerprintPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\MainPageFilters.xaml.cs" />
     <Compile Include="Pages\HistogramManipulationPage.xaml.cs">
@@ -227,6 +231,10 @@
     <Page Include="Dialogs\PixelManagerDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\FingerprintPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\HistogramManipulationPage.xaml">
       <SubType>Designer</SubType>

@@ -15,12 +15,14 @@ namespace ImageProcessor.Pages
 
         public const string PixelManagerTag = "Pixel Manager";
         public const string HistogramManipulationTag = "Histograms";
+        public const string FingerprintTag = "Fingerprint";
 
         // List of ValueTuple holding the Navigation Tag and the relative Navigation Page
         private readonly List<(string Tag, Type Page)> _pages = new List<(string Tag, Type Page)>
         {
             (PixelManagerTag, typeof(PixelManagerPage)),
             (HistogramManipulationTag, typeof(HistogramManipulationPage)),
+            (FingerprintTag, typeof(FingerprintPage)),
         };
 
         private bool navigated = false;
