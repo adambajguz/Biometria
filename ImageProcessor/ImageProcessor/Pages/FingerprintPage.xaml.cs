@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Linq;
 using ImageProcessor.Data;
-using LiveCharts;
-using LiveCharts.Uwp;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
@@ -54,6 +50,7 @@ namespace ImageProcessor.Pages
             NextStep();
             DataContext = this;
         }
+
         private void SliderValue3_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e) => SliderValue3Text.Text = Math.Round(SliderValue3.Value, 2).ToString();
 
         private int StepCounter = 0;
@@ -85,6 +82,10 @@ namespace ImageProcessor.Pages
             {
                 DetectMinutia.IsEnabled = false;
                 FilterMinutia.IsEnabled = true;
+            }
+            else if (StepCounter == 4)
+            {
+                FilterMinutia.IsEnabled = false;
             }
 
             StepCounter++;
@@ -120,7 +121,6 @@ namespace ImageProcessor.Pages
         {
             BinaryzationHelper.NiblackBinaryzation(editingBitmap, ThresholdValueNiblackS, ThresholdValueNiblackK);
 
-
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
             NextStep();
@@ -128,7 +128,28 @@ namespace ImageProcessor.Pages
 
         private async void ApplySkeletonization_Click(object sender, RoutedEventArgs e)
         {
+            int width = editingBitmap.PixelWidth;
+            int height = editingBitmap.PixelHeight;
 
+            // jesli nie potrzebujemy robić GetPixel na oryginalnych pixelach a tylko na zmienionych to originalImage i contextOriginal sa niepotrzebne
+            WriteableBitmap originalImage = editingBitmap.Clone();
+
+            using (BitmapContext contextOriginal = originalImage.GetBitmapContext())
+            using (BitmapContext context = editingBitmap.GetBitmapContext())
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        Color pixel = GetPixel(contextOriginal, x, y);
+                        pixel.G = 0;
+                        pixel.B = 0;
+
+                        SetPixel(context, x, y, pixel);
+                    }
+                }
+
+            }
 
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
@@ -150,6 +171,31 @@ namespace ImageProcessor.Pages
 
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
+            NextStep();
+        }
+
+        public static void SetPixel(BitmapContext context, int x, int y, Color color) => context.Pixels[y * context.Width + x] = (color.A << 24) | (color.R << 16) | (color.G << 8) | color.B;
+        public static void SetPixel(BitmapContext context, int x, int y, byte a, byte r, byte g, byte b) => context.Pixels[y * context.Width + x] = (a << 24) | (r << 16) | (g << 8) | b;
+        public static void SetPixel(BitmapContext context, int x, int y, byte r, byte g, byte b) => context.Pixels[y * context.Width + x] = (255 << 24) | (r << 16) | (g << 8) | b;
+
+        public static Color GetPixel(BitmapContext context, int x, int y)
+        {
+            var c = context.Pixels[y * context.Width + x];
+            var a = (byte)(c >> 24);
+
+            // Prevent division by zero
+            int ai = a;
+            if (ai == 0)
+            {
+                ai = 1;
+            }
+
+            // Scale inverse alpha to use cheap integer mul bit shift
+            ai = ((255 << 8) / ai);
+            return Color.FromArgb(a,
+                                 (byte)((((c >> 16) & 0xFF) * ai) >> 8),
+                                 (byte)((((c >> 8) & 0xFF) * ai) >> 8),
+                                 (byte)((((c & 0xFF) * ai) >> 8)));
         }
     }
 
