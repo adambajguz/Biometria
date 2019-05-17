@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ImageProcessor.Data;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -149,12 +150,84 @@ namespace ImageProcessor.Pages
                     }
                 }
 
+                KMMHelper kmmHelper = new KMMHelper();
+
+                int[,] pixels = new int[width, height];
+                pixels = kmmHelper.PixelInfo(context, pixels, width, height);
+                int[,] pixelsWeights = new int[width, height];
+
+                bool change = false;
+                do
+                {
+                    pixels = kmmHelper.Mark_2s(pixels, width, height);
+                    pixels = kmmHelper.Mark_3s(pixels, width, height);
+                    pixelsWeights = kmmHelper.CalculateWeights(context, pixels, pixelsWeights, width, height);
+
+                    for (int i = 0; i < width; i++) //delete '4's
+                    {
+                        for (int j = 0; j < height; j++)
+                        {
+                            if (pixels[i, j] == 4)
+                            {
+                                if (kmmHelper.A.Contains(pixelsWeights[i, j]))
+                                {
+                                    pixels[i, j] = 0;
+                                    SetPixel(context, i, j, Colors.White);
+                                    change = true;
+                                }
+                            }
+                        }
+                    }
+
+                    for (int i = 0; i < width; i++) //delete not needed '2's
+                    {
+                        for (int j = 0; j < height; j++)
+                        {
+                            if (pixels[i, j] == 2)
+                            {
+                                if (kmmHelper.A.Contains(kmmHelper.CalculateWeight(i, j, context, width, height)))
+                                {
+                                    pixels[i, j] = 0;
+                                    SetPixel(context, i, j, Colors.White);
+                                    change = true;
+                                }
+                                else
+                                {
+                                    pixels[i, j] = 1;
+                                }
+                            }
+                        }
+                    }
+
+                    for (int i = 0; i < width; i++) //delete not needed '3's
+                    {
+                        for (int j = 0; j < height; j++)
+                        {
+                            if (pixels[i, j] == 3)
+                            {
+                                if (kmmHelper.A.Contains(kmmHelper.CalculateWeight(i, j, context, width, height)))
+                                {
+                                    pixels[i, j] = 0;
+                                    SetPixel(context, i, j, Colors.White);
+                                    change = true;
+                                }
+                                else
+                                {
+                                    pixels[i, j] = 1;
+                                }
+                            }
+                        }
+                    }
+                } while (change);
             }
 
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
             NextStep();
         }
+
+
+
 
         private async void DetectMinutia_Click(object sender, RoutedEventArgs e)
         {
