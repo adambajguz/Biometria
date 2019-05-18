@@ -138,27 +138,17 @@ namespace ImageProcessor.Pages
             using (BitmapContext contextOriginal = originalImage.GetBitmapContext())
             using (BitmapContext context = editingBitmap.GetBitmapContext())
             {
-                for (int y = 0; y < height; y++)
-                {
-                    for (int x = 0; x < width; x++)
-                    {
-                        Color pixel = GetPixel(contextOriginal, x, y);
-                        pixel.G = 0;
-                        pixel.B = 0;
-
-                        SetPixel(context, x, y, pixel);
-                    }
-                }
-
                 KMMHelper kmmHelper = new KMMHelper();
 
                 int[,] pixels = new int[width, height];
                 pixels = kmmHelper.PixelInfo(context, pixels, width, height);
                 int[,] pixelsWeights = new int[width, height];
 
-                bool change = false;
+                bool change;
                 do
                 {
+                    change = false;
+
                     pixels = kmmHelper.Mark_2s(pixels, width, height);
                     pixels = kmmHelper.Mark_3s(pixels, width, height);
                     pixelsWeights = kmmHelper.CalculateWeights(context, pixels, pixelsWeights, width, height);
