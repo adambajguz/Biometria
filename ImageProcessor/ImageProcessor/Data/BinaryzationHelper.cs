@@ -5,6 +5,29 @@ namespace ImageProcessor.Data
 {
     public static class BinaryzationHelper
     {
+        public static bool IsBinaryImage(WriteableBitmap bitmap)
+        {
+            using (var context = bitmap.GetBitmapContext(ReadWriteMode.ReadOnly))
+            {
+                var px = context.Pixels;
+                var len = context.Length;
+                for (var i = 0; i < len; ++i)
+                {
+                    // Extract
+                    var c = px[i];
+                    var a = (c >> 24) & 0x000000FF;
+                    var r = (c >> 16) & 0x000000FF;
+                    var g = (c >> 8) & 0x000000FF;
+                    var b = (c) & 0x000000FF;
+
+                    if (r != g || g != b || r != b || r != 0 && r != 255)
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
         public static WriteableBitmap ConvertToGrayscale(WriteableBitmap WriteableOutputImage)
         {
             using (var context = WriteableOutputImage.GetBitmapContext(ReadWriteMode.ReadOnly))
@@ -18,7 +41,7 @@ namespace ImageProcessor.Data
                 {
                     var rp = dest.Pixels;
                     var len = context.Length;
-                    for (var i = 0; i < len; i++)
+                    for (var i = 0; i < len; ++i)
                     {
                         // Extract
                         var c = px[i];
@@ -41,9 +64,9 @@ namespace ImageProcessor.Data
             return WriteableOutputImage;
         }
 
-        public static WriteableBitmap ManualBinaryzation(int threshold, WriteableBitmap WriteableOutputImage)
-        {
-            WriteableOutputImage.ForEach((x, y, curColor) =>
+        public static WriteableBitmap ManualBinaryzation(int threshold, WriteableBitmap bitmap)
+        {         
+            bitmap.ForEach((x, y, curColor) =>
             {
                 if (curColor.R > threshold)
                     return Color.FromArgb(255, 255, 255, 255);
@@ -51,10 +74,10 @@ namespace ImageProcessor.Data
                 return Color.FromArgb(255, 0, 0, 0);
             });
 
-            return WriteableOutputImage;
+            return bitmap;
         }
 
-  
+
         public static WriteableBitmap NiblackBinaryzation(WriteableBitmap WriteableOutputImage, int size = 25, double k = 0.5)
         {
             NiblackThreshold niblack = new NiblackThreshold(size, k);

@@ -35,19 +35,21 @@
                     <MenuFlyoutItem Text="Pixel manager dialog" Click="OpenPixelManagerDialogMenuFlyoutItem_Click"/>
                     <MenuFlyoutItem Text="Histograms" Click="OpenHistogramsPageMenuFlyoutItem_Click"/>
                     <MenuFlyoutSeparator/>
-                    <MenuFlyoutItem Text="Convert to grayscale" Click="ConvertToGrayScalePageMenuFlyoutItem_Click"/>
-                    <MenuFlyoutItem Text="Manual binaryzation" Click="ManualBinaryzationPageMenuFlyoutItem_Click"/>
-                    <MenuFlyoutItem Text="Otsu binaryzation" Click="OtsuBinaryzationPageMenuFlyoutItem_Click"/>
-                    <MenuFlyoutItem Text="Niblack binaryzation" Click="NiblackinaryzationPageMenuFlyoutItem_Click"/>
+                    
+                    <MenuFlyoutSubItem Text="Binaryzation">
+                        <MenuFlyoutItem Text="Convert to grayscale" Click="ConvertToGrayScalePageMenuFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Manual binaryzation" Click="ManualBinaryzationPageMenuFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Otsu binaryzation" Click="OtsuBinaryzationPageMenuFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Niblack binaryzation" Click="NiblackinaryzationPageMenuFlyoutItem_Click"/>
+                    </MenuFlyoutSubItem>
+
                     <MenuFlyoutSeparator/>
                     <MenuFlyoutSubItem Text="Convolution filters">
                         <MenuFlyoutItem Text="Low/High pass or custom" Click="CustomPageMenuFlyoutItem_Click"/>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Text="Prewitt" Click="PrewittPageMenuFlyoutItem_Click"/>
                         <MenuFlyoutItem Text="Prewitt X" Click="PrewittXPageMenuFlyoutItem_Click"/>
                         <MenuFlyoutItem Text="Prewitt Y" Click="PrewittYPageMenuFlyoutItem_Click"/>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Text="Sobel" Click="SobelPageMenuFlyoutItem_Click"/>
                         <MenuFlyoutItem Text="Sobel X" Click="SobelXPageMenuFlyoutItem_Click"/>
                         <MenuFlyoutItem Text="Sobel Y" Click="SobelYPageMenuFlyoutItem_Click"/>
                         <MenuFlyoutSeparator/>

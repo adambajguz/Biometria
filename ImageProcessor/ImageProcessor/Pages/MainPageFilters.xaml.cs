@@ -64,16 +64,6 @@ namespace ImageProcessor.Pages
             }
         }
 
-        private async void PrewittPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            WriteableBitmap gX = WriteableBitmapCovolute.Convolute(WriteableOutputImage, PrewittX);
-            WriteableBitmap gY = WriteableBitmapCovolute.Convolute(WriteableOutputImage, PrewittY);
-
-            WriteableOutputImage = GradientMagnitude.CalculateGradientMagnitude(gX, gY);
-
-            await UpdateOutputImage();
-        }
-
         private async void PrewittXPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             WriteableOutputImage = WriteableBitmapCovolute.Convolute(WriteableOutputImage, PrewittX);
@@ -84,17 +74,6 @@ namespace ImageProcessor.Pages
         private async void PrewittYPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             WriteableOutputImage = WriteableBitmapCovolute.Convolute(WriteableOutputImage, PrewittY);
-
-            await UpdateOutputImage();
-        }
-
-
-        private async void SobelPageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            WriteableBitmap gX = WriteableBitmapCovolute.Convolute(WriteableOutputImage, SobelX);
-            WriteableBitmap gY = WriteableBitmapCovolute.Convolute(WriteableOutputImage, SobelY);
-
-            WriteableOutputImage = GradientMagnitude.CalculateGradientMagnitude(gX, gY);
 
             await UpdateOutputImage();
         }
@@ -168,7 +147,7 @@ namespace ImageProcessor.Pages
                     {
                         for (int x = 0; x < width; x++)
                         {
-                            byte a = GetPixel(contextOriginal, x, y).A;
+                            byte a = PixelHelper.GetPixel(contextOriginal, x, y).A;
                             red = new byte[maskSize * maskSize];
                             green = new byte[maskSize * maskSize];
                             blue = new byte[maskSize * maskSize];
@@ -184,7 +163,7 @@ namespace ImageProcessor.Pages
                                     }
                                     else
                                     {
-                                        Color tmp = GetPixel(contextOriginal, c, r);
+                                        Color tmp = PixelHelper.GetPixel(contextOriginal, c, r);
                                         red[count] = tmp.R;
                                         green[count] = tmp.G;
                                         blue[count] = tmp.B;
@@ -197,7 +176,7 @@ namespace ImageProcessor.Pages
                             Array.Sort(blue);
 
                             int index = (count % 2 == 0) ? count / 2 - 1 : count / 2;
-                            SetPixel(context, x, y, a, red[index], green[index], blue[index]);
+                            PixelHelper.SetPixel(context, x, y, a, red[index], green[index], blue[index]);
                         }
                     }
 
@@ -249,7 +228,7 @@ namespace ImageProcessor.Pages
                                             int TempY = y + y2;
                                             if (TempY >= 0 && TempY < height)
                                             {
-                                                Color TempColor = GetPixel(contextOriginal, TempX, TempY);
+                                                Color TempColor = PixelHelper.GetPixel(contextOriginal, TempX, TempY);
                                                 RValues[i] += TempColor.R;
                                                 GValues[i] += TempColor.G;
                                                 BValues[i] += TempColor.B;
@@ -287,36 +266,11 @@ namespace ImageProcessor.Pages
                                 }
                             }
 
-                            SetPixel(context, x, y, (byte)(RValues[j] / NumPixels[j]), (byte)(GValues[j] / NumPixels[j]), (byte)(BValues[j] / NumPixels[j]));
+                            PixelHelper.SetPixel(context, x, y, (byte)(RValues[j] / NumPixels[j]), (byte)(GValues[j] / NumPixels[j]), (byte)(BValues[j] / NumPixels[j]));
                         }
                     }
                 }
             }
         }
-
-        public static void SetPixel(BitmapContext context, int x, int y, byte a, byte r, byte g, byte b) => context.Pixels[y * context.Width + x] = (a << 24) | (r << 16) | (g << 8) | b;
-
-        public static void SetPixel(BitmapContext context, int x, int y, byte r, byte g, byte b) => context.Pixels[y * context.Width + x] = (255 << 24) | (r << 16) | (g << 8) | b;
-
-        public static Color GetPixel(BitmapContext context, int x, int y)
-        {
-            var c = context.Pixels[y * context.Width + x];
-            var a = (byte)(c >> 24);
-
-            // Prevent division by zero
-            int ai = a;
-            if (ai == 0)
-            {
-                ai = 1;
-            }
-
-            // Scale inverse alpha to use cheap integer mul bit shift
-            ai = ((255 << 8) / ai);
-            return Color.FromArgb(a,
-                                 (byte)((((c >> 16) & 0xFF) * ai) >> 8),
-                                 (byte)((((c >> 8) & 0xFF) * ai) >> 8),
-                                 (byte)((((c & 0xFF) * ai) >> 8)));
-        }
-
     }
 }

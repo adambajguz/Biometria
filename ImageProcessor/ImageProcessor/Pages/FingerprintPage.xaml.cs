@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ImageProcessor.Data;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -48,8 +49,11 @@ namespace ImageProcessor.Pages
             SliderValue3.ValueChanged += SliderValue3_ValueChanged;
             SliderValue3_ValueChanged(null, null);
             NextStep();
+
             DataContext = this;
         }
+
+
 
         private void SliderValue3_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e) => SliderValue3Text.Text = Math.Round(SliderValue3.Value, 2).ToString();
 
@@ -94,6 +98,9 @@ namespace ImageProcessor.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             this.editingBitmap = e.Parameter as WriteableBitmap;
+
+            if (BinaryzationHelper.IsBinaryImage(editingBitmap))
+                NextStep();
         }
 
         private void GetOtsuThreshold_Click(object sender, RoutedEventArgs e)
@@ -128,28 +135,7 @@ namespace ImageProcessor.Pages
 
         private async void ApplySkeletonization_Click(object sender, RoutedEventArgs e)
         {
-            int width = editingBitmap.PixelWidth;
-            int height = editingBitmap.PixelHeight;
-
-            // jesli nie potrzebujemy robić GetPixel na oryginalnych pixelach a tylko na zmienionych to originalImage i contextOriginal sa niepotrzebne
-            WriteableBitmap originalImage = editingBitmap.Clone();
-
-            using (BitmapContext contextOriginal = originalImage.GetBitmapContext())
-            using (BitmapContext context = editingBitmap.GetBitmapContext())
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    for (int x = 0; x < width; x++)
-                    {
-                        Color pixel = GetPixel(contextOriginal, x, y);
-                        pixel.G = 0;
-                        pixel.B = 0;
-
-                        SetPixel(context, x, y, pixel);
-                    }
-                }
-
-            }
+            KMMHelper.KMM(editingBitmap);
 
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
@@ -172,30 +158,6 @@ namespace ImageProcessor.Pages
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
             NextStep();
-        }
-
-        public static void SetPixel(BitmapContext context, int x, int y, Color color) => context.Pixels[y * context.Width + x] = (color.A << 24) | (color.R << 16) | (color.G << 8) | color.B;
-        public static void SetPixel(BitmapContext context, int x, int y, byte a, byte r, byte g, byte b) => context.Pixels[y * context.Width + x] = (a << 24) | (r << 16) | (g << 8) | b;
-        public static void SetPixel(BitmapContext context, int x, int y, byte r, byte g, byte b) => context.Pixels[y * context.Width + x] = (255 << 24) | (r << 16) | (g << 8) | b;
-
-        public static Color GetPixel(BitmapContext context, int x, int y)
-        {
-            var c = context.Pixels[y * context.Width + x];
-            var a = (byte)(c >> 24);
-
-            // Prevent division by zero
-            int ai = a;
-            if (ai == 0)
-            {
-                ai = 1;
-            }
-
-            // Scale inverse alpha to use cheap integer mul bit shift
-            ai = ((255 << 8) / ai);
-            return Color.FromArgb(a,
-                                 (byte)((((c >> 16) & 0xFF) * ai) >> 8),
-                                 (byte)((((c >> 8) & 0xFF) * ai) >> 8),
-                                 (byte)((((c & 0xFF) * ai) >> 8)));
         }
     }
 

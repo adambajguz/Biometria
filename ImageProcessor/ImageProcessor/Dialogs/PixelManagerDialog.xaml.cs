@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using ImageProcessor.Data;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
