@@ -135,115 +135,11 @@ namespace ImageProcessor.Pages
 
         private async void ApplySkeletonization_Click(object sender, RoutedEventArgs e)
         {
-            int width = editingBitmap.PixelWidth;
-            int height = editingBitmap.PixelHeight;
-
-            using (BitmapContext context = editingBitmap.GetBitmapContext())
-            {
-                KMMHelper kmmHelper = new KMMHelper();
-
-                int[,] pixels = kmmHelper.PixelInfo(context);
-                
-                bool change;
-                do
-                {
-                    change = false;
-
-                    pixels = kmmHelper.Mark_2s(pixels);
-                    pixels = kmmHelper.Mark_3s(pixels);
-
-                    change = Delete4s(context, kmmHelper, pixels, change);
-                    change = Delete2s(context, kmmHelper, pixels, change);
-                    change = Delete3s(context, kmmHelper, pixels, change);
-                } while (change);
-            }
+            KMMHelper.KMM(editingBitmap);
 
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
             NextStep();
-        }
-
-        private static bool Delete3s(BitmapContext context, KMMHelper kmmHelper, int[,] pixels, bool change)
-        {
-            int width = context.Width;
-            int height = context.Height;
-
-            for (int i = 0; i < width; i++) //delete not needed '3's
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    if (pixels[i, j] == 3)
-                    {
-                        int weight = kmmHelper.CalculateWeight(i, j, context);
-                        if (kmmHelper.A.Contains(weight))
-                        {
-                            pixels[i, j] = 0;
-                            SetPixel(context, i, j, Colors.White);
-                            change = true;
-                        }
-                        else
-                        {
-                            pixels[i, j] = 1;
-                        }
-                    }
-                }
-            }
-
-            return change;
-        }
-
-        private static bool Delete2s(BitmapContext context, KMMHelper kmmHelper, int[,] pixels, bool change)
-        {
-            int width = context.Width;
-            int height = context.Height;
-
-            for (int i = 0; i < width; i++) //delete not needed '2's
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    if (pixels[i, j] == 2)
-                    {
-                        int weight = kmmHelper.CalculateWeight(i, j, context);
-                        if (kmmHelper.A.Contains(weight))
-                        {
-                            pixels[i, j] = 0;
-                            SetPixel(context, i, j, Colors.White);
-                            change = true;
-                        }
-                        else
-                        {
-                            pixels[i, j] = 1;
-                        }
-                    }
-                }
-            }
-
-            return change;
-        }
-
-        private static bool Delete4s(BitmapContext context, KMMHelper kmmHelper, int[,] pixels, bool change)
-        {
-            int width = context.Width;
-            int height = context.Height;
-
-            for (int i = 0; i < width; i++) //delete '4's
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    if (pixels[i, j] == 4)
-                    {
-                        int weight = kmmHelper.CalculateWeight(i, j, context);
-                        if (kmmHelper.A.Contains(weight))
-                        {
-                            pixels[i, j] = 0;
-                            SetPixel(context, i, j, Colors.White);
-                            change = true;
-                        }
-                    }
-                }
-            }
-
-            return change;
         }
 
         private async void DetectMinutia_Click(object sender, RoutedEventArgs e)

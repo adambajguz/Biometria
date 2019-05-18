@@ -1,4 +1,5 @@
-﻿using Windows.UI;
+﻿using System.Linq;
+using Windows.UI;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace ImageProcessor.Data
@@ -22,7 +23,116 @@ namespace ImageProcessor.Data
                                 237, 239, 240, 241, 243, 244, 245, 246,
                                 247, 248, 249, 251, 252, 253, 254, 255 };
 
-        public int[,] PixelInfo(BitmapContext context)
+        public static WriteableBitmap KMM(WriteableBitmap bitmap)
+        {
+            using (BitmapContext context = bitmap.GetBitmapContext())
+            {
+                KMMHelper kmmHelper = new KMMHelper();
+
+                int[,] pixels = kmmHelper.PixelInfo(context);
+
+                bool change;
+                do
+                {
+                    change = false;
+
+                    pixels = kmmHelper.Mark_2s(pixels);
+                    pixels = kmmHelper.Mark_3s(pixels);
+
+                    change = Delete4s(context, kmmHelper, pixels, change);
+                    change = Delete2s(context, kmmHelper, pixels, change);
+                    change = Delete3s(context, kmmHelper, pixels, change);
+                } while (change);
+            }
+
+            return bitmap;
+        }
+
+        private static bool Delete3s(BitmapContext context, KMMHelper kmmHelper, int[,] pixels, bool change)
+        {
+            int width = context.Width;
+            int height = context.Height;
+
+            for (int i = 0; i < width; i++) //delete not needed '3's
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    if (pixels[i, j] == 3)
+                    {
+                        int weight = kmmHelper.CalculateWeight(i, j, context);
+                        if (kmmHelper.A.Contains(weight))
+                        {
+                            pixels[i, j] = 0;
+                            SetPixel(context, i, j, Colors.White);
+                            change = true;
+                        }
+                        else
+                        {
+                            pixels[i, j] = 1;
+                        }
+                    }
+                }
+            }
+
+            return change;
+        }
+
+        private static bool Delete2s(BitmapContext context, KMMHelper kmmHelper, int[,] pixels, bool change)
+        {
+            int width = context.Width;
+            int height = context.Height;
+
+            for (int i = 0; i < width; i++) //delete not needed '2's
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    if (pixels[i, j] == 2)
+                    {
+                        int weight = kmmHelper.CalculateWeight(i, j, context);
+                        if (kmmHelper.A.Contains(weight))
+                        {
+                            pixels[i, j] = 0;
+                            SetPixel(context, i, j, Colors.White);
+                            change = true;
+                        }
+                        else
+                        {
+                            pixels[i, j] = 1;
+                        }
+                    }
+                }
+            }
+
+            return change;
+        }
+
+        private static bool Delete4s(BitmapContext context, KMMHelper kmmHelper, int[,] pixels, bool change)
+        {
+            int width = context.Width;
+            int height = context.Height;
+
+            for (int i = 0; i < width; i++) //delete '4's
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    if (pixels[i, j] == 4)
+                    {
+                        int weight = kmmHelper.CalculateWeight(i, j, context);
+                        if (kmmHelper.A.Contains(weight))
+                        {
+                            pixels[i, j] = 0;
+                            SetPixel(context, i, j, Colors.White);
+                            change = true;
+                        }
+                    }
+                }
+            }
+
+            return change;
+        }
+
+
+        private int[,] PixelInfo(BitmapContext context)
         {
             int width = context.Width;
             int height = context.Height;
@@ -41,7 +151,7 @@ namespace ImageProcessor.Data
             return pixels;
         }
 
-        public int[,] Mark_2s(int[,] pixels)
+        private int[,] Mark_2s(int[,] pixels)
         {
             int width = pixels.GetLength(0);
             int height = pixels.GetLength(1);
@@ -67,7 +177,7 @@ namespace ImageProcessor.Data
             return pixels;
         }
 
-        public int[,] Mark_3s(int[,] pixels)
+        private int[,] Mark_3s(int[,] pixels)
         {
             int width = pixels.GetLength(0);
             int height = pixels.GetLength(1);
@@ -93,7 +203,7 @@ namespace ImageProcessor.Data
             return pixels;
         }
 
-        public int CalculateWeight(int i, int j, BitmapContext context)
+        private int CalculateWeight(int i, int j, BitmapContext context)
         {
             int width = context.Width;
             int height = context.Height;
@@ -120,6 +230,10 @@ namespace ImageProcessor.Data
 
             return weight;
         }
+
+        public static void SetPixel(BitmapContext context, int x, int y, Color color) => context.Pixels[y * context.Width + x] = (color.A << 24) | (color.R << 16) | (color.G << 8) | color.B;
+        public static void SetPixel(BitmapContext context, int x, int y, byte a, byte r, byte g, byte b) => context.Pixels[y * context.Width + x] = (a << 24) | (r << 16) | (g << 8) | b;
+        public static void SetPixel(BitmapContext context, int x, int y, byte r, byte g, byte b) => context.Pixels[y * context.Width + x] = (255 << 24) | (r << 16) | (g << 8) | b;
 
         public static Color GetPixel(BitmapContext context, int x, int y)
         {
