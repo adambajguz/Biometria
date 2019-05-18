@@ -64,9 +64,9 @@ namespace ImageProcessor.Data
             return WriteableOutputImage;
         }
 
-        public static WriteableBitmap ManualBinaryzation(int threshold, WriteableBitmap WriteableOutputImage)
-        {
-            WriteableOutputImage.ForEach((x, y, curColor) =>
+        public static WriteableBitmap ManualBinaryzation(int threshold, WriteableBitmap bitmap)
+        {         
+            bitmap.ForEach((x, y, curColor) =>
             {
                 if (curColor.R > threshold)
                     return Color.FromArgb(255, 255, 255, 255);
@@ -74,7 +74,7 @@ namespace ImageProcessor.Data
                 return Color.FromArgb(255, 0, 0, 0);
             });
 
-            return WriteableOutputImage;
+            return bitmap;
         }
 
 

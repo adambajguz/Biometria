@@ -159,30 +159,6 @@ namespace ImageProcessor.Pages
             await parentMainPage.UpdateOutputImage();
             NextStep();
         }
-
-        public static void SetPixel(BitmapContext context, int x, int y, Color color) => context.Pixels[y * context.Width + x] = (color.A << 24) | (color.R << 16) | (color.G << 8) | color.B;
-        public static void SetPixel(BitmapContext context, int x, int y, byte a, byte r, byte g, byte b) => context.Pixels[y * context.Width + x] = (a << 24) | (r << 16) | (g << 8) | b;
-        public static void SetPixel(BitmapContext context, int x, int y, byte r, byte g, byte b) => context.Pixels[y * context.Width + x] = (255 << 24) | (r << 16) | (g << 8) | b;
-
-        public static Color GetPixel(BitmapContext context, int x, int y)
-        {
-            var c = context.Pixels[y * context.Width + x];
-            var a = (byte)(c >> 24);
-
-            // Prevent division by zero
-            int ai = a;
-            if (ai == 0)
-            {
-                ai = 1;
-            }
-
-            // Scale inverse alpha to use cheap integer mul bit shift
-            ai = ((255 << 8) / ai);
-            return Color.FromArgb(a,
-                                 (byte)((((c >> 16) & 0xFF) * ai) >> 8),
-                                 (byte)((((c >> 8) & 0xFF) * ai) >> 8),
-                                 (byte)((((c & 0xFF) * ai) >> 8)));
-        }
     }
 
 }
