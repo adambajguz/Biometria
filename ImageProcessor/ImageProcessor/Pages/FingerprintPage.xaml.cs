@@ -49,8 +49,11 @@ namespace ImageProcessor.Pages
             SliderValue3.ValueChanged += SliderValue3_ValueChanged;
             SliderValue3_ValueChanged(null, null);
             NextStep();
+
             DataContext = this;
         }
+
+
 
         private void SliderValue3_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e) => SliderValue3Text.Text = Math.Round(SliderValue3.Value, 2).ToString();
 
@@ -95,6 +98,9 @@ namespace ImageProcessor.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             this.editingBitmap = e.Parameter as WriteableBitmap;
+
+            if (BinaryzationHelper.IsBinaryImage(editingBitmap))
+                NextStep();
         }
 
         private void GetOtsuThreshold_Click(object sender, RoutedEventArgs e)
@@ -132,82 +138,23 @@ namespace ImageProcessor.Pages
             int width = editingBitmap.PixelWidth;
             int height = editingBitmap.PixelHeight;
 
-            // jesli nie potrzebujemy robić GetPixel na oryginalnych pixelach a tylko na zmienionych to originalImage i contextOriginal sa niepotrzebne
-            WriteableBitmap originalImage = editingBitmap.Clone();
-
-            using (BitmapContext contextOriginal = originalImage.GetBitmapContext())
             using (BitmapContext context = editingBitmap.GetBitmapContext())
             {
                 KMMHelper kmmHelper = new KMMHelper();
 
-                int[,] pixels = new int[width, height];
-                pixels = kmmHelper.PixelInfo(context, pixels, width, height);
-                int[,] pixelsWeights = new int[width, height];
-
+                int[,] pixels = kmmHelper.PixelInfo(context);
+                
                 bool change;
                 do
                 {
                     change = false;
 
-                    pixels = kmmHelper.Mark_2s(pixels, width, height);
-                    pixels = kmmHelper.Mark_3s(pixels, width, height);
-                    pixelsWeights = kmmHelper.CalculateWeights(context, pixels, pixelsWeights, width, height);
+                    pixels = kmmHelper.Mark_2s(pixels);
+                    pixels = kmmHelper.Mark_3s(pixels);
 
-                    for (int i = 0; i < width; i++) //delete '4's
-                    {
-                        for (int j = 0; j < height; j++)
-                        {
-                            if (pixels[i, j] == 4)
-                            {
-                                if (kmmHelper.A.Contains(pixelsWeights[i, j]))
-                                {
-                                    pixels[i, j] = 0;
-                                    SetPixel(context, i, j, Colors.White);
-                                    change = true;
-                                }
-                            }
-                        }
-                    }
-
-                    for (int i = 0; i < width; i++) //delete not needed '2's
-                    {
-                        for (int j = 0; j < height; j++)
-                        {
-                            if (pixels[i, j] == 2)
-                            {
-                                if (kmmHelper.A.Contains(kmmHelper.CalculateWeight(i, j, context, width, height)))
-                                {
-                                    pixels[i, j] = 0;
-                                    SetPixel(context, i, j, Colors.White);
-                                    change = true;
-                                }
-                                else
-                                {
-                                    pixels[i, j] = 1;
-                                }
-                            }
-                        }
-                    }
-
-                    for (int i = 0; i < width; i++) //delete not needed '3's
-                    {
-                        for (int j = 0; j < height; j++)
-                        {
-                            if (pixels[i, j] == 3)
-                            {
-                                if (kmmHelper.A.Contains(kmmHelper.CalculateWeight(i, j, context, width, height)))
-                                {
-                                    pixels[i, j] = 0;
-                                    SetPixel(context, i, j, Colors.White);
-                                    change = true;
-                                }
-                                else
-                                {
-                                    pixels[i, j] = 1;
-                                }
-                            }
-                        }
-                    }
+                    change = Delete4s(context, kmmHelper, pixels, change);
+                    change = Delete2s(context, kmmHelper, pixels, change);
+                    change = Delete3s(context, kmmHelper, pixels, change);
                 } while (change);
             }
 
@@ -216,8 +163,88 @@ namespace ImageProcessor.Pages
             NextStep();
         }
 
+        private static bool Delete3s(BitmapContext context, KMMHelper kmmHelper, int[,] pixels, bool change)
+        {
+            int width = context.Width;
+            int height = context.Height;
 
+            for (int i = 0; i < width; i++) //delete not needed '3's
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    if (pixels[i, j] == 3)
+                    {
+                        int weight = kmmHelper.CalculateWeight(i, j, context);
+                        if (kmmHelper.A.Contains(weight))
+                        {
+                            pixels[i, j] = 0;
+                            SetPixel(context, i, j, Colors.White);
+                            change = true;
+                        }
+                        else
+                        {
+                            pixels[i, j] = 1;
+                        }
+                    }
+                }
+            }
 
+            return change;
+        }
+
+        private static bool Delete2s(BitmapContext context, KMMHelper kmmHelper, int[,] pixels, bool change)
+        {
+            int width = context.Width;
+            int height = context.Height;
+
+            for (int i = 0; i < width; i++) //delete not needed '2's
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    if (pixels[i, j] == 2)
+                    {
+                        int weight = kmmHelper.CalculateWeight(i, j, context);
+                        if (kmmHelper.A.Contains(weight))
+                        {
+                            pixels[i, j] = 0;
+                            SetPixel(context, i, j, Colors.White);
+                            change = true;
+                        }
+                        else
+                        {
+                            pixels[i, j] = 1;
+                        }
+                    }
+                }
+            }
+
+            return change;
+        }
+
+        private static bool Delete4s(BitmapContext context, KMMHelper kmmHelper, int[,] pixels, bool change)
+        {
+            int width = context.Width;
+            int height = context.Height;
+
+            for (int i = 0; i < width; i++) //delete '4's
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    if (pixels[i, j] == 4)
+                    {
+                        int weight = kmmHelper.CalculateWeight(i, j, context);
+                        if (kmmHelper.A.Contains(weight))
+                        {
+                            pixels[i, j] = 0;
+                            SetPixel(context, i, j, Colors.White);
+                            change = true;
+                        }
+                    }
+                }
+            }
+
+            return change;
+        }
 
         private async void DetectMinutia_Click(object sender, RoutedEventArgs e)
         {

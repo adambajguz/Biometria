@@ -22,11 +22,15 @@ namespace ImageProcessor.Data
                                 237, 239, 240, 241, 243, 244, 245, 246,
                                 247, 248, 249, 251, 252, 253, 254, 255 };
 
-        public int[,] PixelInfo(BitmapContext context, int[,] pixels, int width, int height)
+        public int[,] PixelInfo(BitmapContext context)
         {
-            for (int i = 0; i < width; i++)
+            int width = context.Width;
+            int height = context.Height;
+
+            int[,] pixels = new int[width, height];
+            for (int i = 0; i < width; ++i)
             {
-                for (int j = 0; j < height; j++)
+                for (int j = 0; j < height; ++j)
                 {
                     if (GetPixel(context, i, j) == Colors.Black)
                         pixels[i, j] = 1;
@@ -37,11 +41,14 @@ namespace ImageProcessor.Data
             return pixels;
         }
 
-        public int[,] Mark_2s(int[,] pixels, int width, int height)
+        public int[,] Mark_2s(int[,] pixels)
         {
-            for (int i = 0; i < width; i++) //mark '2's
+            int width = pixels.GetLength(0);
+            int height = pixels.GetLength(1);
+
+            for (int i = 0; i < width; ++i)
             {
-                for (int j = 0; j < height; j++)
+                for (int j = 0; j < height; ++j)
                 {
                     if (pixels[i, j] == 1)
                     {
@@ -56,14 +63,18 @@ namespace ImageProcessor.Data
                     }
                 }
             }
+
             return pixels;
         }
 
-        public int[,] Mark_3s(int[,] pixels, int width, int height)
+        public int[,] Mark_3s(int[,] pixels)
         {
-            for (int i = 0; i < width; i++) //mark '3's
+            int width = pixels.GetLength(0);
+            int height = pixels.GetLength(1);
+
+            for (int i = 0; i < width; ++i)
             {
-                for (int j = 0; j < height; j++)
+                for (int j = 0; j < height; ++j)
                 {
                     if (pixels[i, j] == 1)
                     {
@@ -78,28 +89,18 @@ namespace ImageProcessor.Data
                     }
                 }
             }
+
             return pixels;
         }
 
-        public int[,] CalculateWeights(BitmapContext context, int[,] pixels, int[,] pixelsWeights, int width, int height)
+        public int CalculateWeight(int i, int j, BitmapContext context)
         {
-            for (int i = 0; i < width; i++) //calculate weight
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    if (pixels[i, j] != 0)
-                    {
-                        pixelsWeights[i, j] = CalculateWeight(i, j, context, width, height);
-                    }
-                }
-            }
-            return pixelsWeights;
-        }
+            int width = context.Width;
+            int height = context.Height;
 
-        public int CalculateWeight(int i, int j, BitmapContext context, int width, int height)
-        {
             int[] N = new int[] { 128, 1, 2, 64, 0, 4, 32, 16, 8 };
             int weight = 0;
+
             if (i - 1 > 0 && j - 1 > 0 && GetPixel(context, i - 1, j - 1) == Colors.Black)
                 weight += N[0];
             if (j - 1 > 0 && GetPixel(context, i, j - 1) == Colors.Black)
@@ -116,6 +117,7 @@ namespace ImageProcessor.Data
                 weight += N[7];
             if (i + 1 < width && j + 1 < height && GetPixel(context, i + 1, j + 1) == Colors.Black)
                 weight += N[8];
+
             return weight;
         }
 
