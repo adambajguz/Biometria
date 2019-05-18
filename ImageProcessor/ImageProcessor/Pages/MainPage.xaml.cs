@@ -518,5 +518,13 @@ namespace ImageProcessor.Pages
                 NavView_Navigate(tmp, WriteableOutputImage);
             }
         }
+
+        private async void InvertMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            WriteableOutputImage = WriteableOutputImage.Invert();
+
+            AddToUndo(WriteableOutputImage.Clone());
+            await UpdateOutputImage();
+        }
     }
 }

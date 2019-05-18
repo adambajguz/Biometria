@@ -30,6 +30,11 @@ namespace ImageProcessor.Pages
 
         public void NavView_Navigate(string navItemTag, object parameter)
         {
+            ContentFrame_Reset(true);
+            ContentFrameShow();
+            ContentFrameMinimize.IsEnabled = true;
+            ContentFrameClose.IsEnabled = true;
+
             Type _page = null;
 
             var item = _pages.FirstOrDefault(p => p.Tag.Equals(navItemTag));
@@ -43,11 +48,6 @@ namespace ImageProcessor.Pages
             // Only navigate if the selected page isn't currently loaded.
             if (!(_page is null) && !navigated)// && !Type.Equals(preNavPageType, _page) && !Type.Equals(preNavPageType, _page))
             {
-                ContentFrame_Reset(true);
-                ContentFrameShow();
-                ContentFrameMinimize.IsEnabled = true;
-                ContentFrameClose.IsEnabled = true;
-
                 navigatedTo = navItemTag;
                 navigated = true;
                 ContentFrame.Navigate(_page, parameter);

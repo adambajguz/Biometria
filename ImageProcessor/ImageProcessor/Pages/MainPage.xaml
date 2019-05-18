@@ -41,6 +41,7 @@
                     <MenuFlyoutSeparator/>
 
                     <MenuFlyoutItem Text="Convert to grayscale" Click="ConvertToGrayScalePageMenuFlyoutItem_Click"/>
+                    <MenuFlyoutItem Text="Invert" Click="InvertMenuFlyoutItem_Click"/>
 
                     <MenuFlyoutSubItem Text="Binaryzation">
                         <MenuFlyoutItem Text="Manual binaryzation" Click="ManualBinaryzationPageMenuFlyoutItem_Click"/>
