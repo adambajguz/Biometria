@@ -37,7 +37,7 @@ namespace ImageProcessor.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            this.editingBitmap = e.Parameter as WriteableBitmap;
+            this.editingBitmap = (e.Parameter as WriteableBitmap).Clone();
 
             UpdateHistograms();
         }
@@ -126,6 +126,7 @@ namespace ImageProcessor.Pages
                                          LUT[color.B]);
                 });
 
+                parentMainPage.AddToUndo(editingBitmap.Clone());
                 UpdateHistograms();
                 parentMainPage.WriteableOutputImage = editingBitmap;
                 await parentMainPage.UpdateOutputImage();
@@ -160,9 +161,7 @@ namespace ImageProcessor.Pages
                                      (byte)(Math.Log(1 + color.B) * cB));
             });
 
-
-
-
+            parentMainPage.AddToUndo(editingBitmap.Clone());
             UpdateHistograms();
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
@@ -205,6 +204,7 @@ namespace ImageProcessor.Pages
                 //                     (byte)((Math.Pow(color.B, 2) + 1) * cB));
             });
 
+            parentMainPage.AddToUndo(editingBitmap.Clone());
             UpdateHistograms();
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
@@ -252,6 +252,7 @@ namespace ImageProcessor.Pages
                                              LUT_B[color.B]);
                     });
 
+                    parentMainPage.AddToUndo(editingBitmap.Clone());
                     UpdateHistograms();
                     parentMainPage.WriteableOutputImage = editingBitmap;
                     await parentMainPage.UpdateOutputImage();
@@ -299,6 +300,7 @@ namespace ImageProcessor.Pages
                                      (byte)histB[color.B]);
             });
 
+            parentMainPage.AddToUndo(editingBitmap.Clone());
             UpdateHistograms();
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();

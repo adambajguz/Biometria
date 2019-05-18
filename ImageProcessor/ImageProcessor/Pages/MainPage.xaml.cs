@@ -53,6 +53,8 @@ namespace ImageProcessor.Pages
         {
             this.InitializeComponent();
 
+            ReopenFlyoutItem.IsEnabled = false;
+            EditMenuBarItem.IsEnabled = false;
             SaveMenuFlyoutItem.IsEnabled = false;
             AdvancedToolsMenuBarItem.IsEnabled = false;
             ToolsMenuBarItem.IsEnabled = false;
@@ -68,6 +70,8 @@ namespace ImageProcessor.Pages
         private CanvasVirtualBitmap OutputVirtualBitmap;
         public WriteableBitmap WriteableOutputImage;
         public WriteableBitmap WriteableOutputImageCopy;
+
+        public Stack<WriteableBitmap> PrevOutputs = new Stack<WriteableBitmap>();
 
         private async void OpenImageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
@@ -88,7 +92,9 @@ namespace ImageProcessor.Pages
             StorageFile inputFile = await picker.PickSingleFileAsync();
             if (inputFile != null)
             {
+                ReopenFlyoutItem.IsEnabled = true;
                 SaveMenuFlyoutItem.IsEnabled = true;
+                EditMenuBarItem.IsEnabled = true;
                 AdvancedToolsMenuBarItem.IsEnabled = true;
                 ToolsMenuBarItem.IsEnabled = true;
                 ZoomCommandBar.IsEnabled = true;
@@ -130,6 +136,9 @@ namespace ImageProcessor.Pages
                     WriteableOutputImage.SetSource(stream);
                     WriteableOutputImageCopy = WriteableOutputImage.Clone();
 
+                    PrevOutputs.Push(WriteableOutputImage.Clone());
+                    UndoFlyoutItem.IsEnabled = false;
+
                     await UpdateOutputImage();
                 }
 
@@ -149,6 +158,9 @@ namespace ImageProcessor.Pages
             ContentFrame_Reset();
 
             WriteableOutputImage = WriteableOutputImageCopy.Clone();
+            PrevOutputs.Clear();
+            PrevOutputs.Push(WriteableOutputImage.Clone());
+
             await UpdateOutputImage();
         }
 
@@ -320,11 +332,14 @@ namespace ImageProcessor.Pages
 
         private async void OpenPixelManagerDialogMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            PixelManagerDialog dialog = new PixelManagerDialog(WriteableOutputImage);
+            PixelManagerDialog dialog = new PixelManagerDialog(WriteableOutputImage.Clone());
             await dialog.ShowAsync();
 
             if (dialog.ExitResult == PixelManagerDialogExitResult.BitmapChanged)
             {
+                AddToUndo(dialog.editingBitmap);
+                WriteableOutputImage = dialog.editingBitmap;
+
                 await UpdateOutputImage();
             }
         }
@@ -479,5 +494,29 @@ namespace ImageProcessor.Pages
 
         private void ExitMenuFlyoutItem_Click(object sender, RoutedEventArgs e) => CoreApplication.Exit();
 
+        public void AddToUndo(WriteableBitmap bitmap)
+        {
+            PrevOutputs.Push(bitmap);
+            UndoFlyoutItem.IsEnabled = true;
+        }
+
+        private async void UndoMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            PrevOutputs.Pop();
+
+            if (PrevOutputs.Count <= 1)
+                UndoFlyoutItem.IsEnabled = false;
+
+            WriteableOutputImage = PrevOutputs.Peek();
+
+            await UpdateOutputImage();
+
+            if (navigated)
+            {
+                string tmp = navigatedTo;
+                ContentFrame_Reset(false);
+                NavView_Navigate(tmp, WriteableOutputImage);
+            }
+        }
     }
 }

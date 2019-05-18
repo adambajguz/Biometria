@@ -26,13 +26,10 @@ namespace ImageProcessor.Pages
         };
 
         private bool navigated = false;
+        private string navigatedTo;
 
         public void NavView_Navigate(string navItemTag, object parameter)
         {
-            ContentFrameShow();
-            ContentFrameMinimize.IsEnabled = true;
-            ContentFrameClose.IsEnabled = true;
-
             Type _page = null;
 
             var item = _pages.FirstOrDefault(p => p.Tag.Equals(navItemTag));
@@ -46,6 +43,12 @@ namespace ImageProcessor.Pages
             // Only navigate if the selected page isn't currently loaded.
             if (!(_page is null) && !navigated)// && !Type.Equals(preNavPageType, _page) && !Type.Equals(preNavPageType, _page))
             {
+                ContentFrame_Reset(true);
+                ContentFrameShow();
+                ContentFrameMinimize.IsEnabled = true;
+                ContentFrameClose.IsEnabled = true;
+
+                navigatedTo = navItemTag;
                 navigated = true;
                 ContentFrame.Navigate(_page, parameter);
             }
@@ -82,7 +85,7 @@ namespace ImageProcessor.Pages
             ContentFrame_Reset();
         }
 
-        public void ContentFrame_Reset()
+        public void ContentFrame_Reset(bool hide = true)
         {
             if (ContentFrame.CanGoBack)
                 ContentFrame.GoBack();
@@ -93,7 +96,9 @@ namespace ImageProcessor.Pages
 
             ContentFrameMinimize.IsEnabled = false;
             ContentFrameClose.IsEnabled = false;
-            ContentFrameCollapse();
+
+            if (hide)
+                ContentFrameCollapse();
         }
     }
 }

@@ -52,10 +52,14 @@ namespace ImageProcessor.Pages
                 {
 
                     Color pixelColor = PixelColorPicker.Color;
+
+                    editingBitmap = editingBitmap.Clone();
                     editingBitmap.SetPixel(x, y, pixelColor);
+                    parentMainPage.AddToUndo(editingBitmap);
 
                     OriginalColorPreview.Fill = new SolidColorBrush(pixelColor);
 
+                    parentMainPage.WriteableOutputImage = editingBitmap;
                     await parentMainPage.UpdateOutputImage();
                 }
             }

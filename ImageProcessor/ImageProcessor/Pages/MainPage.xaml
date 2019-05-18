@@ -24,10 +24,14 @@
             <MenuBar Grid.Row="0" Background="{ThemeResource PivotNavButtonPointerOverBorderThemeBrush}">
                 <MenuBarItem Title="File">
                     <MenuFlyoutItem Text="Open image..." Click="OpenImageMenuFlyoutItem_Click"/>
-                    <MenuFlyoutItem Text="Reopen image" Click="ReOpenImageMenuFlyoutItem_Click"/>
+                    <MenuFlyoutItem x:Name="ReopenFlyoutItem" Text="Reopen image" Click="ReOpenImageMenuFlyoutItem_Click"/>
                     <MenuFlyoutItem x:Name="SaveMenuFlyoutItem" Text="Save output as..." Click="SaveOutputAsImageMenuFlyoutItem_Click"/>
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem Text="Exit" Click="ExitMenuFlyoutItem_Click"/>
+                </MenuBarItem>
+
+                <MenuBarItem Title="Edit" x:Name="EditMenuBarItem">
+                    <MenuFlyoutItem x:Name="UndoFlyoutItem" Text="Undo" Click="UndoMenuFlyoutItem_Click"/>
                 </MenuBarItem>
 
                 <MenuBarItem Title="Tools" x:Name="ToolsMenuBarItem">
@@ -35,9 +39,10 @@
                     <MenuFlyoutItem Text="Pixel manager dialog" Click="OpenPixelManagerDialogMenuFlyoutItem_Click"/>
                     <MenuFlyoutItem Text="Histograms" Click="OpenHistogramsPageMenuFlyoutItem_Click"/>
                     <MenuFlyoutSeparator/>
-                    
+
+                    <MenuFlyoutItem Text="Convert to grayscale" Click="ConvertToGrayScalePageMenuFlyoutItem_Click"/>
+
                     <MenuFlyoutSubItem Text="Binaryzation">
-                        <MenuFlyoutItem Text="Convert to grayscale" Click="ConvertToGrayScalePageMenuFlyoutItem_Click"/>
                         <MenuFlyoutItem Text="Manual binaryzation" Click="ManualBinaryzationPageMenuFlyoutItem_Click"/>
                         <MenuFlyoutItem Text="Otsu binaryzation" Click="OtsuBinaryzationPageMenuFlyoutItem_Click"/>
                         <MenuFlyoutItem Text="Niblack binaryzation" Click="NiblackinaryzationPageMenuFlyoutItem_Click"/>

@@ -97,7 +97,7 @@ namespace ImageProcessor.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            this.editingBitmap = e.Parameter as WriteableBitmap;
+            this.editingBitmap = (e.Parameter as WriteableBitmap).Clone();
 
             if (BinaryzationHelper.IsBinaryImage(editingBitmap))
                 NextStep();
@@ -119,6 +119,7 @@ namespace ImageProcessor.Pages
 
             BinaryzationHelper.ManualBinaryzation(ThresholdValue, editingBitmap);
 
+            parentMainPage.AddToUndo(editingBitmap.Clone());
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
             NextStep();
@@ -128,6 +129,7 @@ namespace ImageProcessor.Pages
         {
             BinaryzationHelper.NiblackBinaryzation(editingBitmap, ThresholdValueNiblackS, ThresholdValueNiblackK);
 
+            parentMainPage.AddToUndo(editingBitmap.Clone());
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
             NextStep();
@@ -137,6 +139,7 @@ namespace ImageProcessor.Pages
         {
             KMMHelper.KMM(editingBitmap);
 
+            parentMainPage.AddToUndo(editingBitmap.Clone());
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
             NextStep();
@@ -146,6 +149,7 @@ namespace ImageProcessor.Pages
         {
 
 
+            parentMainPage.AddToUndo(editingBitmap.Clone());
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
             NextStep();
@@ -155,6 +159,7 @@ namespace ImageProcessor.Pages
         {
 
 
+            parentMainPage.AddToUndo(editingBitmap.Clone());
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
             NextStep();

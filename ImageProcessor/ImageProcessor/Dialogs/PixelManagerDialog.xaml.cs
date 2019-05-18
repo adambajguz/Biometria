@@ -22,7 +22,7 @@ namespace ImageProcessor.Dialogs
     {
         public PixelManagerDialogExitResult ExitResult { get; set; }
 
-        private WriteableBitmap editingBitmap;
+        public WriteableBitmap editingBitmap { get; private set; }
 
         public PixelManagerDialog(WriteableBitmap writeableBitmap)
         {

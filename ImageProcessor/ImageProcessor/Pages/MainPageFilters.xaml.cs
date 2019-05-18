@@ -55,6 +55,7 @@ namespace ImageProcessor.Pages
             {
                 WriteableOutputImage = WriteableBitmapCovolute.Convolute(WriteableOutputImage, await dialog.GetKernel());
 
+                AddToUndo(WriteableOutputImage.Clone());
                 await UpdateOutputImage();
             }
             else
@@ -68,6 +69,7 @@ namespace ImageProcessor.Pages
         {
             WriteableOutputImage = WriteableBitmapCovolute.Convolute(WriteableOutputImage, PrewittX);
 
+            AddToUndo(WriteableOutputImage.Clone());
             await UpdateOutputImage();
         }
 
@@ -75,6 +77,7 @@ namespace ImageProcessor.Pages
         {
             WriteableOutputImage = WriteableBitmapCovolute.Convolute(WriteableOutputImage, PrewittY);
 
+            AddToUndo(WriteableOutputImage.Clone());
             await UpdateOutputImage();
         }
 
@@ -82,6 +85,7 @@ namespace ImageProcessor.Pages
         {
             WriteableOutputImage = WriteableBitmapCovolute.Convolute(WriteableOutputImage, SobelX);
 
+            AddToUndo(WriteableOutputImage.Clone());
             await UpdateOutputImage();
         }
 
@@ -89,6 +93,7 @@ namespace ImageProcessor.Pages
         {
             WriteableOutputImage = WriteableBitmapCovolute.Convolute(WriteableOutputImage, SobelY);
 
+            AddToUndo(WriteableOutputImage.Clone());
             await UpdateOutputImage();
         }
 
@@ -96,6 +101,7 @@ namespace ImageProcessor.Pages
         {
             WriteableOutputImage = WriteableBitmapCovolute.Convolute(WriteableOutputImage, Laplace1);
 
+            AddToUndo(WriteableOutputImage.Clone());
             await UpdateOutputImage();
         }
 
@@ -103,6 +109,7 @@ namespace ImageProcessor.Pages
         {
             WriteableOutputImage = WriteableBitmapCovolute.Convolute(WriteableOutputImage, Laplace2);
 
+            AddToUndo(WriteableOutputImage.Clone());
             await UpdateOutputImage();
         }
 
@@ -110,6 +117,7 @@ namespace ImageProcessor.Pages
         {
             KuwaharaFilter(WriteableOutputImage, 5);
 
+            AddToUndo(WriteableOutputImage.Clone());
             await UpdateOutputImage();
         }
 
@@ -117,6 +125,7 @@ namespace ImageProcessor.Pages
         {
             MedianFilter(WriteableOutputImage, 3);
 
+            AddToUndo(WriteableOutputImage.Clone());
             await UpdateOutputImage();
         }
 
@@ -124,6 +133,7 @@ namespace ImageProcessor.Pages
         {
             MedianFilter(WriteableOutputImage, 5);
 
+            AddToUndo(WriteableOutputImage.Clone());
             await UpdateOutputImage();
         }
 

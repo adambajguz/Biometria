@@ -14,8 +14,9 @@ namespace ImageProcessor.Pages
 
         private async void ConvertToGrayScalePageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            BinaryzationHelper.ConvertToGrayscale(WriteableOutputImage);
+            WriteableOutputImage = BinaryzationHelper.ConvertToGrayscale(WriteableOutputImage);
 
+            AddToUndo(WriteableOutputImage.Clone());
             await UpdateOutputImage();
         }
 
@@ -39,6 +40,7 @@ namespace ImageProcessor.Pages
 
             BinaryzationHelper.ManualBinaryzation(threshold, WriteableOutputImage);
 
+            AddToUndo(WriteableOutputImage.Clone());
             await UpdateOutputImage();
         }
 
@@ -57,6 +59,7 @@ namespace ImageProcessor.Pages
                 return Color.FromArgb(255, 0, 0, 0);
             });
 
+            AddToUndo(WriteableOutputImage.Clone());
             await UpdateOutputImage();
 
             ContentDialog dialog = new ContentDialog
@@ -92,6 +95,7 @@ namespace ImageProcessor.Pages
             NiblackThreshold niblack = new NiblackThreshold(size, k);
             WriteableOutputImage = niblack.Threshold(WriteableOutputImage);
 
+            AddToUndo(WriteableOutputImage.Clone());
             await UpdateOutputImage();
         }
     }
