@@ -42,7 +42,7 @@ namespace ImageProcessor.Data
                                 points.Add(new Point(x, y));
 
                                 if (cn == 0)
-                                    PixelHelper.SetPixel(context, x, y, Colors.IndianRed);
+                                    PixelHelper.SetPixel(context, x, y, Colors.Red);
                                 else if (cn == 1)
                                     PixelHelper.SetPixel(context, x, y, Colors.Green);
                                 else if (cn == 3)
