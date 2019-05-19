@@ -54,3 +54,5 @@ Druga część zadania polega na odnalezieniu punktów charakterystycznych (minu
 * (1 pkt/10 pkt w CEZ) Przefiltrowanie wykrytych punktów charakterystycznych - odrzucenie fałszywych minucji (tj. znajdujących się na krawędziach odcisku palca albo położonych zbyt blisko siebie).
 
 Zbiór obrazów na których należy testować przygotowane rozwiązanie. Obrazy 01-10 są obrazami zawierającymi nieścienione odciski palców, natomiast obraz 01t zawiera przykładowy wynik, który powinien zostać zwrócony przez algorytm.
+
+https://github.com/abdelrahmanMo/Fingerprint-Recognition

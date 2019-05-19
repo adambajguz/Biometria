@@ -145,10 +145,11 @@ namespace ImageProcessor.Pages
             NextStep();
         }
 
+        private List<Point> minutiaes;
+
         private async void DetectMinutia_Click(object sender, RoutedEventArgs e)
         {
-            List<Point> minutiaes = FingerprintHelper.DetectMinutiae(editingBitmap);
-
+            minutiaes = FingerprintHelper.DetectMinutiae(editingBitmap);
 
             parentMainPage.AddToUndo(editingBitmap.Clone());
             parentMainPage.WriteableOutputImage = editingBitmap;

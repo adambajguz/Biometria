@@ -16,13 +16,14 @@ namespace ImageProcessor.Data
                 int width = context.Width;
                 int height = context.Height;
 
+                int[,] area = new int[3, 3];
+
                 for (int x = 1; x < width - 1; ++x)
                 {
                     for (int y = 1; y < height - 1; ++y)
                     {
                         if (PixelHelper.IsBlack(context, x, y))
                         {
-                            int[,] area = new int[3, 3];
                             area[0, 0] = PixelHelper.IsBlack(context, x - 1, y - 1) ? 1 : 0;
                             area[0, 1] = PixelHelper.IsBlack(context, x, y - 1) ? 1 : 0;
                             area[0, 2] = PixelHelper.IsBlack(context, x + 1, y - 1) ? 1 : 0;
@@ -58,6 +59,11 @@ namespace ImageProcessor.Data
             return points;
         }
 
+        // CN == 0 -> single point / isolated point           -> is minutiae
+        // CN == 1 -> ending point / termination point        -> is minutiae
+        // CN == 2 -> edge continuation / normal ridge pixel  -> is not minutiae
+        // CN == 3 -> fork / bifurcation point                -> is minutiae
+        // CN == 4 -> crossing                                -> is minutiae
         private static int CalculateCN(int[,] area3x3)
         {
             int CN = IntAbs(area3x3[1, 2] - area3x3[0, 2]) +
@@ -73,7 +79,6 @@ namespace ImageProcessor.Data
         }
 
         private static bool IsMinutiae(int CN) => CN != 2;
-
 
         private static int IntAbs(int x) => x > 0 ? x : checked(-x);
     }
