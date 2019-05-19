@@ -122,6 +122,7 @@
     <Compile Include="Data\ArrayExtension.cs" />
     <Compile Include="Data\ArrayUtil.cs" />
     <Compile Include="Data\BinaryzationHelper.cs" />
+    <Compile Include="Data\FingerprintHelper.cs" />
     <Compile Include="Data\ImageHistogramData.cs" />
     <Compile Include="Data\KMMHelper.cs" />
     <Compile Include="Data\NiblackThreshold.cs" />

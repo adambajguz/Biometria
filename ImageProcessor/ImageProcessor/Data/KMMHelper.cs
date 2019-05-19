@@ -1,12 +1,11 @@
 ﻿using System.Linq;
-using Windows.UI;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace ImageProcessor.Data
 {
-    public class KMMHelper
+    public static class KMMHelper
     {
-        public int[] A = new int[] { 3, 5, 7, 12, 13, 14, 15, 20,
+        public static int[] A = new int[] { 3, 5, 7, 12, 13, 14, 15, 20,
                                 21, 22, 23, 28, 29, 30, 31, 48,
                                 52, 53, 54, 55, 56, 60, 61, 62,
                                 63, 65, 67, 69, 71, 77, 79, 80,
@@ -26,21 +25,19 @@ namespace ImageProcessor.Data
         {
             using (BitmapContext context = bitmap.GetBitmapContext())
             {
-                KMMHelper kmmHelper = new KMMHelper();
-
-                int[,] pixels = kmmHelper.PixelInfo(context);
+                int[,] pixels = PixelInfo(context);
 
                 bool changed;
                 do
                 {
                     changed = false;
 
-                    pixels = kmmHelper.Mark2s(pixels);
-                    pixels = kmmHelper.Mark3s(pixels);
+                    pixels = Mark2s(pixels);
+                    pixels = Mark3s(pixels);
 
-                    changed = Delete4s(context, kmmHelper, pixels, changed);
-                    changed = Delete2s(context, kmmHelper, pixels, changed);
-                    changed = Delete3s(context, kmmHelper, pixels, changed);
+                    changed = Delete4s(context, pixels, changed);
+                    changed = Delete2s(context, pixels, changed);
+                    changed = Delete3s(context, pixels, changed);
                 } while (changed);
             }
 
@@ -48,19 +45,19 @@ namespace ImageProcessor.Data
         }
 
         #region Deletes
-        private static bool Delete3s(BitmapContext context, KMMHelper kmmHelper, int[,] pixels, bool change)
+        private static bool Delete3s(BitmapContext context, int[,] pixels, bool change)
         {
             int width = context.Width;
             int height = context.Height;
 
-            for (int i = 0; i < width; i++) //delete not needed '3's
+            for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {
                     if (pixels[i, j] == 3)
                     {
-                        int weight = kmmHelper.CalculateWeight(i, j, context);
-                        if (kmmHelper.A.Contains(weight))
+                        int weight = CalculateWeight(i, j, context);
+                        if (A.Contains(weight))
                         {
                             pixels[i, j] = 0;
                             PixelHelper.SetWhite(context, i, j);
@@ -77,19 +74,19 @@ namespace ImageProcessor.Data
             return change;
         }
 
-        private static bool Delete2s(BitmapContext context, KMMHelper kmmHelper, int[,] pixels, bool change)
+        private static bool Delete2s(BitmapContext context, int[,] pixels, bool change)
         {
             int width = context.Width;
             int height = context.Height;
 
-            for (int i = 0; i < width; i++) //delete not needed '2's
+            for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {
                     if (pixels[i, j] == 2)
                     {
-                        int weight = kmmHelper.CalculateWeight(i, j, context);
-                        if (kmmHelper.A.Contains(weight))
+                        int weight = CalculateWeight(i, j, context);
+                        if (A.Contains(weight))
                         {
                             pixels[i, j] = 0;
                             PixelHelper.SetWhite(context, i, j);
@@ -106,19 +103,19 @@ namespace ImageProcessor.Data
             return change;
         }
 
-        private static bool Delete4s(BitmapContext context, KMMHelper kmmHelper, int[,] pixels, bool change)
+        private static bool Delete4s(BitmapContext context, int[,] pixels, bool change)
         {
             int width = context.Width;
             int height = context.Height;
 
-            for (int i = 0; i < width; i++) //delete '4's
+            for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {
                     if (pixels[i, j] == 4)
                     {
-                        int weight = kmmHelper.CalculateWeight(i, j, context);
-                        if (kmmHelper.A.Contains(weight))
+                        int weight = CalculateWeight(i, j, context);
+                        if (A.Contains(weight))
                         {
                             pixels[i, j] = 0;
                             PixelHelper.SetWhite(context, i, j);
@@ -133,7 +130,7 @@ namespace ImageProcessor.Data
         #endregion
 
         #region Marks
-        private int[,] Mark2s(int[,] pixels)
+        private static int[,] Mark2s(int[,] pixels)
         {
             int width = pixels.GetLength(0);
             int height = pixels.GetLength(1);
@@ -159,7 +156,7 @@ namespace ImageProcessor.Data
             return pixels;
         }
 
-        private int[,] Mark3s(int[,] pixels)
+        private static int[,] Mark3s(int[,] pixels)
         {
             int width = pixels.GetLength(0);
             int height = pixels.GetLength(1);
@@ -186,7 +183,7 @@ namespace ImageProcessor.Data
         }
         #endregion
 
-        private int[,] PixelInfo(BitmapContext context)
+        private static int[,] PixelInfo(BitmapContext context)
         {
             int width = context.Width;
             int height = context.Height;
@@ -205,7 +202,7 @@ namespace ImageProcessor.Data
             return pixels;
         }
 
-        private int CalculateWeight(int i, int j, BitmapContext context)
+        private static int CalculateWeight(int i, int j, BitmapContext context)
         {
             int width = context.Width;
             int height = context.Height;
@@ -233,11 +230,11 @@ namespace ImageProcessor.Data
             }
 
             if (j - 1 > 0 && PixelHelper.IsBlack(context, i, j - 1))
-                    weight += N[1];
+                weight += N[1];
             if (j + 1 < height && PixelHelper.IsBlack(context, i, j + 1))
                 weight += N[7];
 
             return weight;
-        }      
+        }
     }
 }

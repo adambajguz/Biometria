@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using ImageProcessor.Data;
-using Windows.UI;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
@@ -147,6 +147,7 @@ namespace ImageProcessor.Pages
 
         private async void DetectMinutia_Click(object sender, RoutedEventArgs e)
         {
+            List<Point> minutiaes = FingerprintHelper.DetectMinutiae(editingBitmap);
 
 
             parentMainPage.AddToUndo(editingBitmap.Clone());

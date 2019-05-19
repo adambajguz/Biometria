@@ -519,6 +519,14 @@ namespace ImageProcessor.Pages
             }
         }
 
+        private void ToogleOriginalFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (OriginalImageColumn.Width.IsStar)
+                OriginalImageColumn.Width = new GridLength(0);
+            else
+                OriginalImageColumn.Width = new GridLength(1, GridUnitType.Star);
+        }
+
         private async void InvertMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             WriteableOutputImage = WriteableOutputImage.Invert();
