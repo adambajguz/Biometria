@@ -145,7 +145,7 @@ namespace ImageProcessor.Pages
             NextStep();
         }
 
-        private List<Point> minutiaes;
+        private Dictionary<Point, MinutiaeType> minutiaes;
 
         private async void DetectMinutia_Click(object sender, RoutedEventArgs e)
         {
@@ -159,12 +159,58 @@ namespace ImageProcessor.Pages
 
         private async void FilterMinutia_Click(object sender, RoutedEventArgs e)
         {
+            using (BitmapContext context = editingBitmap.GetBitmapContext())
+            {
+                int width = context.Width;
+                int height = context.Height;
 
+                List<Point> keys = new List<Point>(minutiaes.Keys);
+
+                foreach (Point m in keys)
+                {
+                    if (minutiaes.ContainsKey(m))
+                        Filter(context, m, minutiaes);
+                }
+            }
 
             parentMainPage.AddToUndo(editingBitmap.Clone());
             parentMainPage.WriteableOutputImage = editingBitmap;
             await parentMainPage.UpdateOutputImage();
             NextStep();
+        }
+
+        private void Filter(BitmapContext context, Point p, Dictionary<Point, MinutiaeType> tab)
+        {
+            MinutiaeType pointType = tab[p];
+            int x = (int)p.X;
+            int y = (int)p.Y;
+
+            for (int k = x - 7; k < x + 8; k++) //domyślnie 6x6 
+            {
+                for (int l = y - 7; l < y + 8; l++)
+                {
+                    if (k != x || l != y)
+                    {
+                        var cc = new Point(k, l);
+                        bool existstInThisLocation = tab.TryGetValue(cc, out var minutiaeType);
+
+                        if (existstInThisLocation)
+                        {
+                            if (minutiaeType == MinutiaeType.Crossing && (pointType == MinutiaeType.Ending || pointType == MinutiaeType.Point))
+                            {
+                                tab.Remove(cc);
+                                PixelHelper.SetBlack(context, k, l);
+                            }
+
+                            if (minutiaeType != MinutiaeType.Crossing)
+                            {
+                                tab.Remove(p);
+                                PixelHelper.SetBlack(context, x, y);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml.Media.Imaging;
@@ -7,16 +8,19 @@ namespace ImageProcessor.Data
 {
     public static class FingerprintHelper
     {
-        public static List<Point> DetectMinutiae(WriteableBitmap bitmap)
+        public static Dictionary<Point, MinutiaeType> DetectMinutiae(WriteableBitmap bitmap)
         {
-            List<Point> points = new List<Point>();
+            Dictionary<Point, MinutiaeType> points = new Dictionary<Point, MinutiaeType>();
 
             using (BitmapContext context = bitmap.GetBitmapContext())
             {
                 int width = context.Width;
                 int height = context.Height;
 
-                int[,] area = new int[3, 3];
+                int[] mask = new int[9];
+
+
+
 
                 for (int x = 1; x < width - 1; ++x)
                 {
@@ -24,31 +28,29 @@ namespace ImageProcessor.Data
                     {
                         if (PixelHelper.IsBlack(context, x, y))
                         {
-                            area[0, 0] = PixelHelper.IsBlack(context, x - 1, y - 1) ? 1 : 0;
-                            area[0, 1] = PixelHelper.IsBlack(context, x, y - 1) ? 1 : 0;
-                            area[0, 2] = PixelHelper.IsBlack(context, x + 1, y - 1) ? 1 : 0;
-
-                            area[1, 0] = PixelHelper.IsBlack(context, x - 1, y) ? 1 : 0;
-                            //area[1, 1] = PixelHelper.IsBlack(context, x    , y    ) ? 1 : 0;
-                            area[1, 2] = PixelHelper.IsBlack(context, x + 1, y) ? 1 : 0;
-
-                            area[2, 0] = PixelHelper.IsBlack(context, x - 1, y + 1) ? 1 : 0;
-                            area[2, 1] = PixelHelper.IsBlack(context, x, y + 1) ? 1 : 0;
-                            area[2, 2] = PixelHelper.IsBlack(context, x + 1, y + 1) ? 1 : 0;
+                            mask[0] = PixelHelper.IsBlack(context, x, y + 1) ? 1 : 0;
+                            mask[1] = PixelHelper.IsBlack(context, x - 1, y + 1) ? 1 : 0;
+                            mask[2] = PixelHelper.IsBlack(context, x - 1, y) ? 1 : 0;
+                            mask[3] = PixelHelper.IsBlack(context, x - 1, y - 1) ? 1 : 0;
+                            mask[4] = PixelHelper.IsBlack(context, x, y - 1) ? 1 : 0;
+                            mask[5] = PixelHelper.IsBlack(context, x + 1, y - 1) ? 1 : 0;
+                            mask[6] = PixelHelper.IsBlack(context, x + 1, y) ? 1 : 0;
+                            mask[7] = PixelHelper.IsBlack(context, x + 1, y + 1) ? 1 : 0;
+                            mask[8] = mask[0];
 
 
-                            int cn = CalculateCN(area);
+                            MinutiaeType cn = CalculateCN(mask);
                             if (IsMinutiae(cn))
                             {
-                                points.Add(new Point(x, y));
+                                points.Add(new Point(x, y), cn);
 
-                                if (cn == 0)
+                                if (cn == MinutiaeType.Point)
                                     PixelHelper.SetPixel(context, x, y, Colors.Red);
-                                else if (cn == 1)
+                                else if (cn == MinutiaeType.Ending)
                                     PixelHelper.SetPixel(context, x, y, Colors.Green);
-                                else if (cn == 3)
+                                else if (cn == MinutiaeType.Fork)
                                     PixelHelper.SetPixel(context, x, y, Colors.Yellow);
-                                else if (cn == 4)
+                                else if (cn == MinutiaeType.Crossing)
                                     PixelHelper.SetPixel(context, x, y, Colors.DeepPink);
                             }
                         }
@@ -64,22 +66,15 @@ namespace ImageProcessor.Data
         // CN == 2 -> edge continuation / normal ridge pixel  -> is not minutiae
         // CN == 3 -> fork / bifurcation point                -> is minutiae
         // CN == 4 -> crossing                                -> is minutiae
-        private static int CalculateCN(int[,] area3x3)
+        private static MinutiaeType CalculateCN(int[] mask)
         {
-            int CN = IntAbs(area3x3[1, 2] - area3x3[0, 2]) +
-                     IntAbs(area3x3[0, 2] - area3x3[0, 1]) +
-                     IntAbs(area3x3[0, 1] - area3x3[0, 0]) +
-                     IntAbs(area3x3[0, 0] - area3x3[1, 0]) +
-                     IntAbs(area3x3[1, 0] - area3x3[2, 0]) +
-                     IntAbs(area3x3[2, 0] - area3x3[2, 1]) +
-                     IntAbs(area3x3[2, 1] - area3x3[2, 2]) +
-                     IntAbs(area3x3[2, 2] - area3x3[1, 2]);
+            int CN = 0;
+            for (int i = 0; i < 8; ++i)
+                CN += Math.Abs(mask[i] - mask[i + 1]);
 
-            return CN / 2;
+            return (MinutiaeType)(CN >> 1);
         }
 
-        private static bool IsMinutiae(int CN) => CN != 2;
-
-        private static int IntAbs(int x) => x > 0 ? x : checked(-x);
+        private static bool IsMinutiae(MinutiaeType CN) => CN != MinutiaeType.Invalid;
     }
 }

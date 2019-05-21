@@ -120,7 +120,7 @@
             <TextBlock Grid.Row="1" Grid.Column="1" Text="Processed image:" VerticalAlignment="Center" Margin="8,0,8,0"/>
 
             <ScrollViewer Grid.Row="2" Grid.Column="1"  HorizontalScrollMode="Enabled" VerticalScrollMode="Enabled" ZoomMode="Disabled"
-                      HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"
+                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
                       x:Name="OutputCanvasScrollViewer" ViewChanged="OutputCanvasScrollViewer_ViewChanged" 
                       ViewChanging="OutputCanvasScrollViewer_ViewChanging" Margin="8" Background="#FFE6E6E6">
                 <Grid>
