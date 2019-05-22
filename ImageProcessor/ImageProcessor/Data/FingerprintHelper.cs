@@ -20,22 +20,20 @@ namespace ImageProcessor.Data
                 int[] mask = new int[9];
 
 
-
-
                 for (int x = 1; x < width - 1; ++x)
                 {
                     for (int y = 1; y < height - 1; ++y)
                     {
                         if (PixelHelper.IsBlack(context, x, y))
                         {
-                            mask[0] = PixelHelper.IsBlack(context, x, y + 1) ? 1 : 0;
-                            mask[1] = PixelHelper.IsBlack(context, x - 1, y + 1) ? 1 : 0;
-                            mask[2] = PixelHelper.IsBlack(context, x - 1, y) ? 1 : 0;
-                            mask[3] = PixelHelper.IsBlack(context, x - 1, y - 1) ? 1 : 0;
-                            mask[4] = PixelHelper.IsBlack(context, x, y - 1) ? 1 : 0;
-                            mask[5] = PixelHelper.IsBlack(context, x + 1, y - 1) ? 1 : 0;
-                            mask[6] = PixelHelper.IsBlack(context, x + 1, y) ? 1 : 0;
-                            mask[7] = PixelHelper.IsBlack(context, x + 1, y + 1) ? 1 : 0;
+                            mask[0] = PixelHelper.IsWhite(context, x    , y + 1) ? 0 : 1;
+                            mask[1] = PixelHelper.IsWhite(context, x - 1, y + 1) ? 0 : 1;
+                            mask[2] = PixelHelper.IsWhite(context, x - 1,     y) ? 0 : 1;
+                            mask[3] = PixelHelper.IsWhite(context, x - 1, y - 1) ? 0 : 1;
+                            mask[4] = PixelHelper.IsWhite(context, x    , y - 1) ? 0 : 1;
+                            mask[5] = PixelHelper.IsWhite(context, x + 1, y - 1) ? 0 : 1;
+                            mask[6] = PixelHelper.IsWhite(context, x + 1,     y) ? 0 : 1;
+                            mask[7] = PixelHelper.IsWhite(context, x + 1, y + 1) ? 0 : 1;
                             mask[8] = mask[0];
 
 
