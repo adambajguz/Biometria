@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--Project was exported from assembly: X:\GitHub\Biometria\Aplikacja\RetinaImageProcessor.UI.exe-->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DCFFC115-0B1F-43BA-80C3-A04D8ECC0540}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>RetinaImageProcessor.UI</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <FileAlignment>512</FileAlignment>
+    <RootNamespace>RetinaImageProcessor.UI</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="AForge">
+      <HintPath>lib\AForge.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Imaging">
+      <HintPath>lib\AForge.Imaging.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Math">
+      <HintPath>lib\AForge.Math.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>mainwindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs" />
+    <Compile Include="Properties\Settings.Designer.cs" />
+    <Compile Include="Logic\Shared\Processing\ImageComparison.cs" />
+    <Compile Include="Logic\Shared\Processing\ComparisonStatistics.cs" />
+    <Compile Include="Logic\Shared\Processing\FeatureExtraction.cs" />
+    <Compile Include="Logic\Shared\Processing\MaskCreation.cs" />
+    <Compile Include="Logic\Shared\Processing\NoiseRemoval.cs" />
+    <Compile Include="Logic\Shared\Processing\Thinning.cs" />
+    <Compile Include="Logic\Shared\Processing\Thresholding.cs" />
+    <Compile Include="Logic\Shared\Processing\ToGrayscaleModes.cs" />
+    <Compile Include="Logic\Shared\Processing\ToGrayscaleConversion.cs" />
+    <Compile Include="Logic\RegionFeatures\View\RegionFeaturesView.xaml.cs">
+      <DependentUpon>viewregionfeaturesview.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Logic\RegionFeatures\View\StateRegionFeatures.cs" />
+    <Compile Include="Logic\MatchedFilters\View\MatchedFiltersView.xaml.cs">
+      <DependentUpon>viewmatchedfiltersview.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Logic\MatchedFilters\View\StateMatchedFilters.cs" />
+    <Compile Include="App.cs" />
+    <Compile Include="Logic\Shared\View\IStatefulView.cs" />
+    <Compile Include="Logic\RegionFeatures\View\StateOperations.cs" />
+    <Compile Include="Logic\MatchedFilters\View\StateOperations.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="logic\matchedfilters\view\matchedfiltersview.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="logic\regionfeatures\view\regionfeaturesview.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="mainwindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
