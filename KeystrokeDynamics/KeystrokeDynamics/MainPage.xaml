@@ -3,21 +3,56 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:KeystrokeDynamics"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Grid>
+        <Pivot Title="Keystroke Dynamics">
 
-        <TextBox x:Name="PasswordTextBox" PlaceholderText="Password" Grid.Row="0" Grid.Column="0" Width="256"/>
-        <Button x:Name="Login" Content="Login" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="0,8,0,0"/>
+            <PivotItem Header="Login">
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox x:Name="PasswordTextBox" PlaceholderText="Password" Grid.Row="0" Grid.Column="0" Width="256"/>
+                    <Button x:Name="Login" Content="Login" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="0,8,0,0"/>
+                </Grid>
+            </PivotItem>
+
+            <PivotItem Header="Register">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock x:Name="TextToRegister" FontFamily="Consolas"/>
+                        <TextBox x:Name="RegisterTextBox" PlaceholderText="Type text" Width="340"
+                              KeyDown="TextToRegister_KeyDown" KeyUp="TextToRegister_KeyUp"/>
+                        <Button x:Name="Register" Content="Register" HorizontalAlignment="Right" Margin="0,8,0,0" Click="Register_Click"/>
+                    </StackPanel>
+
+                    <controls:DataGrid x:Name="datagrid" Grid.Column="1" Grid.Row="0" Grid.RowSpan="4">
+
+                    </controls:DataGrid>
+
+                </Grid>
+            </PivotItem>
+
+        </Pivot>
     </Grid>
+
+
 </Page>
