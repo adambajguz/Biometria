@@ -134,5 +134,22 @@ namespace KeystrokeDynamics
 
             await DialogHelper.ShowMessage("You are a user with id = " + result.ToString());
         }
+
+        private async void Login_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            Vector = Cdd();
+
+            KNN knn = new KNN(3, Metrices.euklides);
+            var result = knn.Execute(Vector, users);
+
+            Storage.Entities.User u = users.Where(x => x.Name == RegisterName.Text).FirstOrDefault();
+            if (u != null && result == u.Id)
+                await DialogHelper.ShowMessage("Zalogowano jako" + u.Name + "(" + u.Id + ")");
+
+            else
+                await DialogHelper.ShowMessage("Błąd logowania");
+
+
+        }
     }
 }

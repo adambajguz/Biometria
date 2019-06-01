@@ -61,6 +61,7 @@
                         <TextBox x:Name="RegisterName" PlaceholderText="Name"/>
                         <Button x:Name="Register" Content="Register" HorizontalAlignment="Right" Margin="0,8,0,0" Click="Register_Click"/>
                         <Button x:Name="WhoAmI" Content="Who am I?" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="0,8,0,0" Click="WhoAmI_Click"/>
+                        <Button x:Name="Login" Content="Login" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="0,8,0,0" Click="Login_Click"/>
                     </StackPanel>
 
                     <controls:DataGrid x:Name="datagrid" Grid.Column="1" Grid.Row="0" Grid.RowSpan="4">
