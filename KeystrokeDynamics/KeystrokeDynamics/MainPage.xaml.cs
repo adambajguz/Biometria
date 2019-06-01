@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KeystrokeDynamics.Helpers;
 using KeystrokeDynamics.Models;
 using KeystrokeDynamics.Storage;
 using Windows.System;
@@ -79,9 +80,8 @@ namespace KeystrokeDynamics
                         ++currentLetter;
                         stringBuilder2.Append(' ');
                     }
-
-
                 }
+
                 TextToRegister.Text = stringBuilder.ToString();
                 s.Text = stringBuilder2.ToString();
                 s.SelectionStart = s.Text.Length;
@@ -95,6 +95,8 @@ namespace KeystrokeDynamics
         private void Register_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             Vector = Cdd();
+
+            KNN knn = new KNN(3, Metrices.euklides);
 
             using (var db = new KeystrokeDynamicsContext())
             {
@@ -119,7 +121,18 @@ namespace KeystrokeDynamics
                            Letter = g.Key,
                            Average = (long)g.Average(x => x.DwellTime.Ticks)
                        })
+                       .OrderBy(obj => obj.Letter)
                        .ToDictionary(x => x.Letter, x => x.Average);
+        }
+
+        private async void WhoAmI_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            Vector = Cdd();
+
+            KNN knn = new KNN(3, Metrices.euklides);
+            var result = knn.Execute(Vector, users);
+
+            await DialogHelper.ShowMessage("You are a user with id = " + result.ToString());
         }
     }
 }

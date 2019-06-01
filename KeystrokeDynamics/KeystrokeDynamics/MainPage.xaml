@@ -12,8 +12,8 @@
     <Grid>
         <Pivot Title="Keystroke Dynamics">
 
-            <PivotItem Header="Login">
-                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+            <PivotItem Header="Identify">
+                <!--<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
@@ -22,9 +22,26 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <TextBox x:Name="PasswordTextBox" PlaceholderText="Password" Grid.Row="0" Grid.Column="0" Width="256"/>
-                    <Button x:Name="Login" Content="Login" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="0,8,0,0"/>
-                </Grid>
+                    <TextBox x:Name="WhoAmITextBox" PlaceholderText="Type" Grid.Row="0" Grid.Column="0" Width="256"/>
+                    <Button x:Name="WhoAmI" Content="Who am I?" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="0,8,0,0"/>
+                </Grid>-->
+            </PivotItem>
+            
+            <PivotItem Header="Verify">
+                <!--<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox x:Name="NameTextBox" PlaceholderText="Name" Grid.Row="0" Grid.Column="0"/>
+                    <TextBox x:Name="PasswordTextBox" PlaceholderText="Password" Grid.Row="1" Grid.Column="0" Width="256"/>
+                    <Button x:Name="Login" Content="Login" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Margin="0,8,0,0"/>
+                </Grid>-->
             </PivotItem>
 
             <PivotItem Header="Register">
@@ -43,12 +60,11 @@
                               KeyDown="TextToRegister_KeyDown" KeyUp="TextToRegister_KeyUp"/>
                         <TextBox x:Name="RegisterName" PlaceholderText="Name"/>
                         <Button x:Name="Register" Content="Register" HorizontalAlignment="Right" Margin="0,8,0,0" Click="Register_Click"/>
+                        <Button x:Name="WhoAmI" Content="Who am I?" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="0,8,0,0" Click="WhoAmI_Click"/>
                     </StackPanel>
 
                     <controls:DataGrid x:Name="datagrid" Grid.Column="1" Grid.Row="0" Grid.RowSpan="4">
-
                     </controls:DataGrid>
-
                 </Grid>
             </PivotItem>
 
