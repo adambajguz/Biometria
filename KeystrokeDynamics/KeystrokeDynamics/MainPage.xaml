@@ -41,6 +41,7 @@
                         <TextBlock x:Name="TextToRegister" FontFamily="Consolas"/>
                         <TextBox x:Name="RegisterTextBox" PlaceholderText="Type text" Width="340"
                               KeyDown="TextToRegister_KeyDown" KeyUp="TextToRegister_KeyUp"/>
+                        <TextBox x:Name="RegisterName" PlaceholderText="Name"/>
                         <Button x:Name="Register" Content="Register" HorizontalAlignment="Right" Margin="0,8,0,0" Click="Register_Click"/>
                     </StackPanel>
 

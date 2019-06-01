@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KeystrokeDynamics.Models;
+using KeystrokeDynamics.Storage;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
 
@@ -21,12 +22,18 @@ namespace KeystrokeDynamics
         StringBuilder stringBuilder;
         StringBuilder stringBuilder2;
 
+        List<Storage.Entities.User> users;
         public MainPage()
         {
             this.InitializeComponent();
             TextToRegister.Text = TextToType;
             stringBuilder = new StringBuilder(TextToType);
             stringBuilder2 = new StringBuilder();
+
+            using (var db = new KeystrokeDynamicsContext())
+            {
+                users = db.Users.ToList();
+            }
         }
 
         public List<KeystrokeData> Data = new List<KeystrokeData>();
@@ -88,18 +95,31 @@ namespace KeystrokeDynamics
         private void Register_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             Vector = Cdd();
+
+            using (var db = new KeystrokeDynamicsContext())
+            {
+                var user = new Storage.Entities.User
+                {
+                    Name = RegisterName.Text,
+                    KeystrokeVector = Vector
+                };
+                db.Users.Add(user);
+                db.SaveChanges();
+
+                users = db.Users.ToList();
+            }
         }
 
 
         private Dictionary<char, long> Cdd()
         {
             return Data.GroupBy(x => x.Key)
-                                             .Select(g => new
-                                             {
-                                                 Letter = g.Key,
-                                                 Average = (long)g.Average(x => x.DwellTime.Ticks)
-                                             })
-                                             .ToDictionary(x => x.Letter, x => x.Average);
+                       .Select(g => new
+                       {
+                           Letter = g.Key,
+                           Average = (long)g.Average(x => x.DwellTime.Ticks)
+                       })
+                       .ToDictionary(x => x.Letter, x => x.Average);
         }
     }
 }
